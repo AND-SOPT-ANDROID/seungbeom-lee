@@ -1,11 +1,6 @@
 package org.sopt.and
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -41,49 +33,30 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.and.ui.theme.ANDANDROIDTheme
-
-class SignUpActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ANDANDROIDTheme {
-                SignUpScreen(onRegister = { id, password ->
-                    val resultIntent = Intent().apply {
-                        putExtra("id", id)
-                        putExtra("password", password)
-                    }
-                    setResult(Activity.RESULT_OK, resultIntent)
-                    finish() // SignUpActivity 종)
-                })
-            }
-        }
-    }
-}
 
 @Composable
-fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modifier) {
-    var showPassword by remember { mutableStateOf(false) }
+fun Welcome(
+    modifier: Modifier = Modifier, onClick: () -> Unit, signUpId: String?, signUpPassword: String?
+) {
+
+    val context = LocalContext.current
     var id by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val context = LocalContext.current
-    val passwordRegex =
-        "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
+    var showPassword by remember { mutableStateOf(false) }
 
     fun dataCheck() {
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
-            Toast.makeText(context, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show()
-        } else if (!passwordRegex.matches(password)) {
-            Toast.makeText(
-                context, " 비밀번호는 8~20자 이내 영문 대소문 , 숫자, 특수문자 중\" +\n" +
-                        "            \"\n 3가지 이상 혼용하여 사용해주세요.", Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            onRegister(id, password)
-            Toast.makeText(context, "회원가입에 성공하였습니다", Toast.LENGTH_SHORT).show()
+        if(signUpId != null) {
+            if (id != signUpId) {
+                Toast.makeText(context, "아이디를 다시 입력해주세요", Toast.LENGTH_SHORT).show()
+            } else if(password != signUpPassword){
+                Toast.makeText(context, "비밀번호를 다시 입력해주세요", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
 
+            }
         }
     }
 
@@ -94,56 +67,27 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             .background(color = colorResource(R.color.basic_background))
             .padding(10.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier)
-            Text(
-                text = "회원가입",
-                fontSize = 20.sp, modifier = Modifier, color = colorResource(R.color.white)
-            )
-            Icon(
-                imageVector = Icons.Default.Clear, contentDescription = Icons.Default.Clear.name,
-                modifier = Modifier.size(30.dp),
-                tint = colorResource(R.color.exit)
-            )
-        }
+        Text(
+            text = "Wavve",
+            color = colorResource(R.color.white),
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold, modifier = Modifier
 
-        Spacer(Modifier.padding(13.dp))
+        )
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "이메일과 비밀번호만으로" +
-                        "\n" + "Wavve를 즐길 수 있어요!",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 20.dp),
-                color = colorResource(R.color.white)
+        Spacer(modifier.padding(40.dp))
 
-            )
-        }
-
-        Spacer(Modifier.padding(13.dp))
-
-        TextField_Custom(
-            "로그인, 비밀번호 찾기,알림에 사용되니 정확한 이메일을 입력해\n주세요",
+        TextField_Custom2(
             id,
             { text: String -> id = text },
-            "wavve@example.com",
+            "이메일 주소 또는 아이디",
             true
         )
-        TextField_Custom(
-            "비밀번호는 8~20자 이내 영문 대소문 , 숫자, 특수문자 중" +
-                    "\n 3가지 이상 혼용하여 사용해주세요",
+        Spacer(modifier.padding(5.dp))
+        TextField_Custom2(
             password,
             { text: String -> password = text },
-            "Wavve 비밀번호 설정",
-
+            "비밀번호",
             showed = showPassword,
         ) {
             TextButton(
@@ -155,7 +99,29 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                 }
             )
         }
+        if (!signUpId.isNullOrEmpty()) {
+            Text(text = signUpId)
+        }
 
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top =30.dp)
+        ) {
+            Button(
+                onClick = { dataCheck() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Text("로그인 하기")
+            }
+            TextButton(
+                onClick = onClick
+            ) {
+                Text("회원가입하기")
+            }
+        }
+
+        Spacer(modifier.padding(10.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Spacer(
                 Modifier
@@ -174,9 +140,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                     .width(100.dp)
                     .background(color = colorResource(R.color.gray_a3))
             )
-
         }
-        //
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(15.dp)
         ) {
@@ -226,7 +190,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             )
             Spacer(modifier.padding(2.dp))
             Text(
-                text = "SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
+                text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
                 fontSize = 14.sp,
                 color = colorResource(R.color.gray_63),
                 modifier = Modifier
@@ -234,29 +198,19 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             )
         }
         Text(
-            text = "  존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
-                    "\n  참고 부탁드립니다.",
+            text = "    존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
+                    "\n    참고 부탁드립니다.",
             fontSize = 14.sp,
             color = colorResource(R.color.gray_63),
             modifier = Modifier
                 .fillMaxWidth()
         )
-
-        Spacer(modifier.padding(100.dp))
-        OutlinedButton(
-            onClick = { dataCheck() },
-            modifier = modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.gray71)
-            )
-        ) {
-            Text(text = "Wavve 화원가입")
-        }
     }
 }
 
+
 @Composable
-fun TextField_Custom(
-    text: String,
+fun TextField_Custom2(
     textfield: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
@@ -282,23 +236,14 @@ fun TextField_Custom(
                 unfocusedContainerColor = colorResource(R.color.textfield_gray2f)
             ),
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = Icons.Default.Info.name
-            )
-            Text(
-                text = text,
-                fontSize = 12.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(7.dp), color = colorResource(R.color.gray_a3)
-            )
-        }
     }
 }
 
 
-
-
-
+@Preview
+@Composable
+private fun WelcomPreview() {
+    val id = ""
+    val password = ""
+    Welcome(onClick = { }, signUpId = id, signUpPassword = password)
+}
