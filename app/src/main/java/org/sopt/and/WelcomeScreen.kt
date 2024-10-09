@@ -2,7 +2,6 @@ package org.sopt.and
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +16,9 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -25,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,10 +39,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun Welcome(
-    modifier: Modifier = Modifier, onClick: () -> Unit, signUpId: String?, signUpPassword: String?
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    loginClick: () -> Unit,
+    signUpId: String?,
+    signUpPassword: String?
 ) {
 
     val context = LocalContext.current
@@ -47,18 +55,9 @@ fun Welcome(
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
-    fun dataCheck() {
-        if(signUpId != null) {
-            if (id != signUpId) {
-                Toast.makeText(context, "아이디를 다시 입력해주세요", Toast.LENGTH_SHORT).show()
-            } else if(password != signUpPassword){
-                Toast.makeText(context, "비밀번호를 다시 입력해주세요", Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(context, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
+    val cScope = rememberCoroutineScope()
+    val snackBarHost = remember { SnackbarHostState() }
 
-            }
-        }
-    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,7 +82,9 @@ fun Welcome(
             "이메일 주소 또는 아이디",
             true
         )
+
         Spacer(modifier.padding(5.dp))
+
         TextField_Custom2(
             password,
             { text: String -> password = text },
@@ -104,15 +105,39 @@ fun Welcome(
         }
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top =30.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 30.dp)
         ) {
             Button(
-                onClick = { dataCheck() },
+                onClick = { loginClick() }
+//                    if (!signUpId.isNullOrEmpty()) {
+//                        if (id != signUpId || password != signUpPassword) {
+//                            cScope.launch {
+//                                val snackBar =
+//                                    snackBarHost.showSnackbar(
+//                                        "아이디 비밀번호가 일치하지 않습니다",
+//                                        "닫기",
+//                                        false,
+//                                        SnackbarDuration.Short
+//                                    )
+//                                // result
+//                                when (snackBar) {
+//                                    SnackbarResult.ActionPerformed -> {}
+//                                    SnackbarResult.Dismissed -> {}
+//                                }
+//                            }
+//                        } else {
+//                            Toast.makeText(context, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
+//                            loginClcik()
+//
+//                        }
+//                    }
+                ,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text("로그인 하기")
+                Text("로그인")
             }
             TextButton(
                 onClick = onClick
@@ -205,6 +230,7 @@ fun Welcome(
             modifier = Modifier
                 .fillMaxWidth()
         )
+
     }
 }
 
@@ -234,7 +260,7 @@ fun TextField_Custom2(
                 .fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = colorResource(R.color.textfield_gray2f)
-            ),
+            )
         )
     }
 }
@@ -245,5 +271,5 @@ fun TextField_Custom2(
 private fun WelcomPreview() {
     val id = ""
     val password = ""
-    Welcome(onClick = { }, signUpId = id, signUpPassword = password)
+    Welcome(onClick = { }, loginClick = {}, signUpId = id, signUpPassword = password)
 }

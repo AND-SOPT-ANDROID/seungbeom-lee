@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -56,7 +55,7 @@ class SignUpActivity : ComponentActivity() {
                         putExtra("password", password)
                     }
                     setResult(Activity.RESULT_OK, resultIntent)
-                    finish() // SignUpActivity 종)
+                    finish()
                 })
             }
         }

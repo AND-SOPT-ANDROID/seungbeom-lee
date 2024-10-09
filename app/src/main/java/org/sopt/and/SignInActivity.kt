@@ -5,15 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import org.sopt.and.ui.theme.ANDANDROIDTheme
 
 class SignInActivity : ComponentActivity() {
@@ -35,7 +28,13 @@ class SignInActivity : ComponentActivity() {
                     Modifier, onClick = {
                         val intent = Intent(this, SignUpActivity::class.java)
                         getResultText.launch(intent)
-                    }, id, password
+                    }, loginClick = {
+                        val intent2 =Intent(this, MyActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(this)
+                        }
+                        intent2.putExtra(id,"profileid")
+                    } ,id, password
                 )
             }
         }
