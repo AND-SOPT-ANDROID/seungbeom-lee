@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AND-ANDROID</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_sign_in">SignInActivity</string>
+    <string name="title_activity_log_in">LogInActivity</string>
     <string name="title_activity_my">MyActivity</string>
     <string name="home">홈</string>
     <string name="search">검색</string>

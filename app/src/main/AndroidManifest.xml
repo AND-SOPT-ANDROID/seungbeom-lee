@@ -18,12 +18,14 @@
             android:label="@string/title_activity_my"
             android:theme="@style/Theme.ANDANDROID" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".LogInActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
-            android:label="@string/title_activity_sign_in"
+            android:label="@string/title_activity_log_in"
             android:theme="@style/Theme.ANDANDROID" />
         <activity
             android:name=".SignUpActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/Theme.ANDANDROID" />
