@@ -51,8 +51,8 @@ class SignUpActivity : ComponentActivity() {
             ANDANDROIDTheme {
                 SignUpScreen(onRegister = { id, password ->
                     val resultIntent = Intent().apply {
-                        putExtra("id", id)
-                        putExtra("password", password)
+                        putExtra("id", id.trim())
+                        putExtra("password", password.trim())
                     }
                     setResult(Activity.RESULT_OK, resultIntent)
                     finish()
@@ -72,6 +72,8 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
         "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
 
     fun dataCheck() {
+        id = id.trim()
+        password = password.trim()
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
             Toast.makeText(context, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show()
         } else if (!passwordRegex.matches(password)) {

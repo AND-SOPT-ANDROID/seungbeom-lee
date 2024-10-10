@@ -1,10 +1,10 @@
 package org.sopt.and
 
-import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,25 +35,19 @@ import org.sopt.and.ui.theme.ANDANDROIDTheme
 
 class MyActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        var id: String? = null
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                id = result.data?.getStringExtra("profileid")
-            }
-        }
         super.onCreate(savedInstanceState)
         setContent {
             ANDANDROIDTheme {
-                MyProfileScreen()
+                MyProfileScreen(intent)
             }
         }
     }
 }
 
 @Composable
-fun MyProfileScreen(modifier: Modifier = Modifier) {
+fun MyProfileScreen(intent : Intent?,modifier: Modifier = Modifier) {
+    val name = intent?.getStringExtra("profileid") ?: ""
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,7 +68,7 @@ fun MyProfileScreen(modifier: Modifier = Modifier) {
                         .padding()
                 )
                 Text(
-                    text = "이승범님",
+                    text = name,
                     color = colorResource(R.color.white),
                     modifier = modifier
                         .padding(start = 5.dp)
@@ -124,7 +118,9 @@ fun MyProfileScreen(modifier: Modifier = Modifier) {
                 )
                 Text(
                     text = "구매하기  >",
-                    color = colorResource(R.color.white)
+                    color = colorResource(R.color.white),
+                            modifier = modifier.padding(bottom = 10.dp)
+
                 )
             }
         }
@@ -184,15 +180,3 @@ fun TextAndContent(text: String, content: @Composable () -> Unit) {
         content()
     }
 }
-
-@Preview
-@Composable
-private fun ProfilePreview() {
-    MyProfileScreen()
-}
-
-
-/*
-1. 바텀 네비게이션바 구현
-2. 프로필 구현
- */

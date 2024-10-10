@@ -1,6 +1,10 @@
 package org.sopt.and
 
+import android.app.Activity
+import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,9 +20,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -27,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,28 +36,40 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat.startActivity
 
 @Composable
-fun Welcome(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    loginClick: () -> Unit,
-    signUpId: String?,
-    signUpPassword: String?
+fun SignInScreen(
+    modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
     var id by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var signUpId by remember { mutableStateOf("") }
+    var signUpPassword by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
 
-    val cScope = rememberCoroutineScope()
-    val snackBarHost = remember { SnackbarHostState() }
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            signUpId = result.data?.getStringExtra("id") ?: ""
+            signUpPassword = result.data?.getStringExtra("password") ?: ""
+        }
+    }
+
+    val loginClick = {
+        val intent2 = Intent(context, MyActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            this.putExtra("profileid", id)
+
+        }
+        context.startActivity(intent2)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,18 +112,22 @@ fun Welcome(
                 }
             )
         }
-        if (!signUpId.isNullOrEmpty()) {
-            Text(text = signUpId)
-        }
+
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 30.dp)
         ) {
             Button(
-                onClick = { loginClick() }
-//                    if (!signUpId.isNullOrEmpty()) {
-//                        if (id != signUpId || password != signUpPassword) {
+                onClick = {
+                    if (signUpId.isNotEmpty()) {
+                        if (id != signUpId || password != signUpPassword) {
+                            Toast.makeText(
+                                context,
+                                "id :" + signUpId + "password : " + signUpPassword,
+                                Toast.LENGTH_SHORT
+                            ).show()
+
 //                            cScope.launch {
 //                                val snackBar =
 //                                    snackBarHost.showSnackbar(
@@ -126,13 +142,12 @@ fun Welcome(
 //                                    SnackbarResult.Dismissed -> {}
 //                                }
 //                            }
-//                        } else {
-//                            Toast.makeText(context, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
-//                            loginClcik()
-//
-//                        }
-//                    }
-                ,
+                        } else {
+                            Toast.makeText(context, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
+                            loginClick()
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -140,7 +155,10 @@ fun Welcome(
                 Text("로그인")
             }
             TextButton(
-                onClick = onClick
+                onClick = {
+                    val intent = Intent(context, SignUpActivity::class.java)
+                    launcher.launch(intent)
+                }
             ) {
                 Text("회원가입하기")
             }
@@ -266,10 +284,3 @@ fun TextField_Custom2(
 }
 
 
-@Preview
-@Composable
-private fun WelcomPreview() {
-    val id = ""
-    val password = ""
-    Welcome(onClick = { }, loginClick = {}, signUpId = id, signUpPassword = password)
-}
