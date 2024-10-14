@@ -25,11 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import org.sopt.and.R
+import org.sopt.and.SignUpActivity
 import org.sopt.and.component.TextAndContent
 
 @Composable
 fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
-    val name = intent?.getStringExtra("profileid") ?: ""
+    val name = intent?.getStringExtra(SignUpActivity.PROFILEID).orEmpty()
 
     Column(
         modifier = Modifier
@@ -82,7 +83,6 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                     text = "구매하기  >",
                     color = colorResource(R.color.white)
                 )
-
             }
 
             Spacer(modifier.padding(10.dp))
@@ -107,7 +107,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
             }
         }
-        TextAndContent("전체 시청 내역") {
+        TextAndContent(text = "전체 시청 내역") {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,7 +121,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier.padding(5.dp))
                 Text(
-                    "시청내역이 없어요",
+                    text = "시청내역이 없어요",
                     color = colorResource(R.color.gray_a3)
                 )
             }
@@ -140,7 +140,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier.padding(5.dp))
                 Text(
-                    "관심프로그램이 없어요",
+                    text = "관심프로그램이 없어요",
                     color = colorResource(R.color.gray_a3)
                 )
             }

@@ -11,17 +11,22 @@ class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ANDANDROIDTheme {
-                SignUpScreen(onRegister = { id, password ->
-                    val resultIntent = Intent().apply {
-                        putExtra("id", id.trim())
-                        putExtra("password", password.trim())
-                    }
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                })
-            }
+            SignUpScreen(onRegister = { id, password ->
+                val resultIntent = Intent().apply {
+                    putExtra(SIGNUPID, id.trim())
+                    putExtra(SIGNUPPASSWORD, password.trim())
+                }
+                setResult(RESULT_OK, resultIntent)
+                finish()
+            })
+
         }
+    }
+
+    companion object {
+        const val SIGNUPID: String = "signupid"
+        const val SIGNUPPASSWORD: String = "signuppassword"
+        const val PROFILEID: String = "profileid"
     }
 }
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -26,24 +27,26 @@ import androidx.compose.ui.unit.sp
 import org.sopt.and.R
 
 @Composable
-fun TextField_Custom(
+fun SignUpTextField(
     text: String,
-    textfield: String,
+    textField: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    showed: Boolean,
-    keyboardOptions: KeyboardOptions,
-    trailingIcon: @Composable (() -> Unit)? = null
+    isShown: Boolean,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    trailingIcon: @Composable (() -> Unit) = { }
 ) {
-    val showPassword = if (!showed) {
-        PasswordVisualTransformation()
-    } else {
-        VisualTransformation.None
+    val showPassword = remember(isShown) {
+        if (!isShown) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        }
     }
     val focusManager = LocalFocusManager.current
     Column(modifier = Modifier) {
         TextField(
-            value = textfield,
+            value = textField,
             onValueChange = onValueChange,
             trailingIcon = trailingIcon,
             placeholder = { Text(placeholder) },
@@ -79,18 +82,20 @@ fun TextField_Custom(
 }
 
 @Composable
-fun TextField_Custom2(
+fun LogInTextField(
     textfield: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    showed: Boolean,
+    isShown: Boolean,
     keyboardOptions: KeyboardOptions,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    val showPassword = if (!showed) {
-        PasswordVisualTransformation()
-    } else {
-        VisualTransformation.None
+    val showPassword = remember(isShown) {
+        if (!isShown) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        }
     }
     val focusManager = LocalFocusManager.current
 
@@ -123,7 +128,8 @@ fun TextAndContent(text: String, content: @Composable () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(15.dp)) {
+            .padding(15.dp)
+    ) {
         Text(
             text = text,
             color = colorResource(R.color.white),

@@ -1,6 +1,7 @@
 package org.sopt.and.screen
 
 import android.app.Activity
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,13 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.and.R
-import org.sopt.and.component.TextField_Custom
+import org.sopt.and.component.SignUpTextField
 
+val passwordRegex =
+    "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
 
 @Composable
 fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modifier) {
@@ -47,13 +51,11 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
     var id by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val passwordRegex =
-        "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
 
     fun dataCheck() {
         id = id.trim()
         password = password.trim()
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
             Toast.makeText(context, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show()
         } else if (!passwordRegex.matches(password)) {
             Toast.makeText(
@@ -78,16 +80,18 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Spacer(modifier)
+            Spacer(Modifier)
             Text(
-                text = "회원가입",
+                text = stringResource(R.string.signup),
                 fontSize = 20.sp, modifier = Modifier, color = colorResource(R.color.white)
             )
             Icon(
                 imageVector = Icons.Default.Clear, contentDescription = Icons.Default.Clear.name,
-                modifier = Modifier.size(30.dp).clickable {
-                    ( context as Activity).finish()
-                },
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable {
+                        (context as Activity).finish()
+                    },
                 tint = colorResource(R.color.exit)
             )
         }
@@ -111,7 +115,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
 
         Spacer(Modifier.padding(13.dp))
 
-        TextField_Custom(
+        SignUpTextField(
             "로그인, 비밀번호 찾기,알림에 사용되니 정확한 이메일을 입력해\n주세요",
             id,
             { text: String -> id = text },
@@ -121,14 +125,14 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                 imeAction = ImeAction.Next,
             )
         )
-        TextField_Custom(
+        SignUpTextField(
             "비밀번호는 8~20자 이내 영문 대소문 , 숫자, 특수문자 중" +
                     "\n 3가지 이상 혼용하여 사용해주세요",
             password,
             { text: String -> password = text },
             "Wavve 비밀번호 설정",
 
-            showed = showPassword,
+            isShown = showPassword,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
             )
@@ -136,9 +140,15 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             TextButton(
                 onClick = { showPassword = !showPassword },
                 content = {
-                    Text(
-                        text = "show", modifier = modifier.padding(7.dp)
-                    )
+                    if (showPassword) {
+                        Text(
+                            text = stringResource(R.string.hide), modifier = modifier.padding(7.dp)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.show), modifier = modifier.padding(7.dp)
+                        )
+                    }
                 }
             )
         }
@@ -163,46 +173,49 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             )
 
         }
-        //
+
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(15.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier.size(50.dp)
+                modifier = modifier
+                    .padding(3.dp)
+                    .size(50.dp)
             )
-
-            Spacer(modifier.padding(3.dp))
 
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier.size(50.dp)
+                modifier = modifier
+                    .padding(3.dp)
+                    .size(50.dp)
             )
-
-            Spacer(modifier.padding(3.dp))
 
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier.size(50.dp)
+                modifier = modifier
+                    .padding(3.dp)
+                    .size(50.dp)
             )
-            Spacer(modifier.padding(3.dp))
 
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier.size(50.dp)
+                modifier = modifier
+                    .padding(3.dp)
+                    .size(50.dp)
             )
-            Spacer(modifier.padding(3.dp))
 
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier.size(50.dp)
+                modifier = modifier
+                    .padding(3.dp)
+                    .size(50.dp)
             )
-            Spacer(modifier.padding(3.dp))
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {

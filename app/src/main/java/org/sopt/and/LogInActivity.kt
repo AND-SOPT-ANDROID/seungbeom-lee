@@ -8,13 +8,9 @@ import org.sopt.and.ui.theme.ANDANDROIDTheme
 
 class LogInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         super.onCreate(savedInstanceState)
         setContent {
-            ANDANDROIDTheme {
-                    LogInScreen()
-            }
+            LogInScreen()
         }
     }
 }
