@@ -13,7 +13,7 @@ class LogInActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ANDANDROIDTheme {
-                    LogInScreen()
+                LogInScreen()
             }
         }
     }
