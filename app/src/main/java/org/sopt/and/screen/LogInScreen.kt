@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.I
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +50,15 @@ import org.sopt.and.MyActivity
 import org.sopt.and.R
 import org.sopt.and.SignUpActivity
 import org.sopt.and.component.LogInTextField
+
+
+val imageList = listOf(
+    Icons.Default.CheckCircle,
+    Icons.Default.CheckCircle,
+    Icons.Default.CheckCircle,
+    Icons.Default.CheckCircle,
+    Icons.Default.CheckCircle
+)
 
 @Composable
 fun LogInScreen(
@@ -68,8 +78,8 @@ fun LogInScreen(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            signUpId = result.data?.getStringExtra(SignUpActivity.SIGNUPID).orEmpty()
-            signUpPassword = result.data?.getStringExtra(SignUpActivity.SIGNUPPASSWORD).orEmpty()
+            signUpId = result.data?.getStringExtra(SignUpActivity.SIGN_UP_ID).orEmpty()
+            signUpPassword = result.data?.getStringExtra(SignUpActivity.SIGN_UP_PASSWORD).orEmpty()
         }
     }
 
@@ -101,7 +111,7 @@ fun LogInScreen(
     fun logInSuccess() {
         Toast.makeText(context, "로그인 하였습니다", Toast.LENGTH_SHORT).show()
         Intent(context, MyActivity::class.java).apply {
-            this.putExtra(SignUpActivity.PROFILEID, id)
+            this.putExtra(SignUpActivity.PROFILE_ID, id)
             flags =
                 Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(this)
@@ -122,8 +132,7 @@ fun LogInScreen(
                     launcher.launch(intent)
                 }
 
-                SnackbarResult.Dismissed -> {
-                }
+                SnackbarResult.Dismissed -> Unit
             }
         }
     }
@@ -197,7 +206,7 @@ fun LogInScreen(
                 Button(
                     onClick = {
                         if (signUpId.isNotBlank()) {
-                            if (!id.equals(signUpId) || !password.equals(signUpPassword)) {
+                            if (id != signUpId || password != signUpPassword) {
                                 logInFalse()
                             } else {
                                 logInSuccess()
@@ -247,69 +256,34 @@ fun LogInScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(15.dp)
             ) {
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
 
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
+                imageList.forEach { item ->
+                    Image(
+                        imageVector = item,
+                        contentDescription = item.name,
+                        modifier = modifier
+                            .padding(3.dp)
+                            .size(50.dp)
+                    )
+                }
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row {
                 Image(
                     imageVector = Icons.Default.Info,
                     contentDescription = Icons.Default.Info.name,
-                    modifier = Modifier.size(5.dp)
+                    modifier = Modifier.padding(top = 6.dp).size(10.dp)
                 )
                 Spacer(modifier.padding(2.dp))
                 Text(
-                    text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
+                    text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기" +
+                            "\n  존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
+                            "\n  참고 부탁드립니다.",
                     fontSize = 14.sp,
                     color = colorResource(R.color.gray_63),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Text(
-                text = "    존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
-                        "\n    참고 부탁드립니다.",
-                fontSize = 14.sp,
-                color = colorResource(R.color.gray_63),
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }

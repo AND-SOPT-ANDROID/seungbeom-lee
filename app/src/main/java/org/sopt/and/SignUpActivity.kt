@@ -12,8 +12,8 @@ class SignUpActivity : ComponentActivity() {
         setContent {
             SignUpScreen(onRegister = { id, password ->
                 val resultIntent = Intent().apply {
-                    putExtra(SIGNUPID, id.trim())
-                    putExtra(SIGNUPPASSWORD, password.trim())
+                    putExtra(SIGN_UP_ID, id.trim())
+                    putExtra(SIGN_UP_PASSWORD, password.trim())
                 }
                 setResult(RESULT_OK, resultIntent)
                 finish()
@@ -23,9 +23,9 @@ class SignUpActivity : ComponentActivity() {
     }
 
     companion object {
-        const val SIGNUPID: String = "signupid"
-        const val SIGNUPPASSWORD: String = "signuppassword"
-        const val PROFILEID: String = "profileid"
+        const val SIGN_UP_ID: String = "signupid"
+        const val SIGN_UP_PASSWORD: String = "signuppassword"
+        const val PROFILE_ID: String = "profileid"
     }
 }
 

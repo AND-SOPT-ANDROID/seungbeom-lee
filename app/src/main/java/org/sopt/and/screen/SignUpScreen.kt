@@ -3,6 +3,7 @@ package org.sopt.and.screen
 import android.app.Activity
 import android.util.Patterns
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +45,7 @@ import org.sopt.and.component.SignUpTextField
 
 val passwordRegex =
     "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
+
 
 @Composable
 fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modifier) {
@@ -103,8 +105,8 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "이메일과 비밀번호만으로" +
-                        "\n" + "Wavve를 즐길 수 있어요!",
+                text = "이메일과 비밀번호만으로\nWavve를 즐길 수 있어요!"
+                        ,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 20.dp),
@@ -175,72 +177,37 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
         }
 
         Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(15.dp)
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(15.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
 
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
+            imageList.forEach { item ->
+                Image(
+                    imageVector = item,
+                    contentDescription = item.name,
+                    modifier = modifier
+                        .padding(3.dp)
+                        .size(50.dp)
+                )
+            }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
+        Row {
+            Image(
                 imageVector = Icons.Default.Info,
                 contentDescription = Icons.Default.Info.name,
-                modifier.size(5.dp)
+                modifier = Modifier.padding(top = 6.dp).size(10.dp)
             )
             Spacer(modifier.padding(2.dp))
             Text(
-                text = "SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
+                text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기" +
+                        "\n  존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
+                        "\n  참고 부탁드립니다.",
                 fontSize = 14.sp,
                 color = colorResource(R.color.gray_63),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
-        Text(
-            text = "  존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
-                    "\n  참고 부탁드립니다.",
-            fontSize = 14.sp,
-            color = colorResource(R.color.gray_63),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
 
         Spacer(modifier.padding(100.dp))
         OutlinedButton(

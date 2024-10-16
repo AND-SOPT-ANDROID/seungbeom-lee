@@ -50,7 +50,8 @@ fun SignUpTextField(
             onValueChange = onValueChange,
             trailingIcon = trailingIcon,
             placeholder = { Text(placeholder) },
-            visualTransformation = showPassword, singleLine = true,
+            visualTransformation = showPassword,
+            singleLine = true,
             keyboardOptions = keyboardOptions,
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -124,7 +125,7 @@ fun LogInTextField(
 }
 
 @Composable
-fun TextAndContent(text: String, content: @Composable () -> Unit) {
+fun TextAndLikeContent(text: String, content: @Composable () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()

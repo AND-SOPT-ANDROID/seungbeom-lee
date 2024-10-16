@@ -26,11 +26,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import org.sopt.and.R
 import org.sopt.and.SignUpActivity
-import org.sopt.and.component.TextAndContent
+import org.sopt.and.component.TextAndLikeContent
 
 @Composable
 fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
-    val name = intent?.getStringExtra(SignUpActivity.PROFILEID).orEmpty()
+    val name = intent?.getStringExtra(SignUpActivity.PROFILE_ID)?: "이승범"
 
     Column(
         modifier = Modifier
@@ -85,9 +85,10 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
             }
 
-            Spacer(modifier.padding(10.dp))
+
             Spacer(
-                modifier
+                Modifier
+                    .padding(top = 20.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(colorResource(R.color.black))
@@ -107,7 +108,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
             }
         }
-        TextAndContent(text = "전체 시청 내역") {
+        TextAndLikeContent(text = "전체 시청 내역") {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -126,7 +127,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
             }
         }
-        TextAndContent("관심 프로그램") {
+        TextAndLikeContent("관심 프로그램") {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
