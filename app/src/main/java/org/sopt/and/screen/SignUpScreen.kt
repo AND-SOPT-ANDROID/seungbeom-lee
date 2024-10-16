@@ -46,7 +46,7 @@ val passwordRegex =
     "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
 
 @Composable
-fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modifier) {
+fun SignUpScreen() {
     var showPassword by remember { mutableStateOf(false) }
     var id by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -63,7 +63,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                         "            \"\n 3가지 이상 혼용하여 사용해주세요.", Toast.LENGTH_SHORT
             ).show()
         } else {
-            onRegister(id, password)
+            TODO("회원가입 정보 넘기기")
             Toast.makeText(context, "회원가입에 성공하였습니다", Toast.LENGTH_SHORT).show()
         }
     }
@@ -142,11 +142,11 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                 content = {
                     if (showPassword) {
                         Text(
-                            text = stringResource(R.string.hide), modifier = modifier.padding(7.dp)
+                            text = stringResource(R.string.hide), modifier = Modifier.padding(7.dp)
                         )
                     } else {
                         Text(
-                            text = stringResource(R.string.show), modifier = modifier.padding(7.dp)
+                            text = stringResource(R.string.show), modifier = Modifier.padding(7.dp)
                         )
                     }
                 }
@@ -180,7 +180,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
+                modifier = Modifier
                     .padding(3.dp)
                     .size(50.dp)
             )
@@ -188,7 +188,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
+                modifier = Modifier
                     .padding(3.dp)
                     .size(50.dp)
             )
@@ -196,7 +196,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
+                modifier = Modifier
                     .padding(3.dp)
                     .size(50.dp)
             )
@@ -204,7 +204,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
+                modifier = Modifier
                     .padding(3.dp)
                     .size(50.dp)
             )
@@ -212,7 +212,7 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = Icons.Default.CheckCircle.name,
-                modifier = modifier
+                modifier = Modifier
                     .padding(3.dp)
                     .size(50.dp)
             )
@@ -222,9 +222,9 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = Icons.Default.Info.name,
-                modifier.size(5.dp)
+                Modifier.size(5.dp)
             )
-            Spacer(modifier.padding(2.dp))
+            Spacer(Modifier.padding(2.dp))
             Text(
                 text = "SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
                 fontSize = 14.sp,
@@ -242,10 +242,10 @@ fun SignUpScreen(onRegister: (String, String) -> Unit, modifier: Modifier = Modi
                 .fillMaxWidth()
         )
 
-        Spacer(modifier.padding(100.dp))
+        Spacer(Modifier.padding(100.dp))
         OutlinedButton(
             onClick = { dataCheck() },
-            modifier = modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
+            modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.gray71)
             )
         ) {

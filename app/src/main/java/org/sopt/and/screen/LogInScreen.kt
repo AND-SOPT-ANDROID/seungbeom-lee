@@ -29,6 +29,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,37 +42,33 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import org.sopt.and.MyActivity
 import org.sopt.and.R
-import org.sopt.and.SignUpActivity
 import org.sopt.and.component.LogInTextField
+import org.sopt.and.findActivity
+import org.sopt.and.viewmodel.LogInViewModel
 
+@ExperimentalPermissionsApi
 @Composable
 fun LogInScreen(
-    modifier: Modifier = Modifier
+    navigateToSignUp: () -> Unit,
+    navigateToMyPage: () -> Unit
 ) {
-
+    val viewModel  = viewModel<LogInViewModel>()
     val context = LocalContext.current
+    val activity = context.findActivity()
 
-    var id by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf("") }
+    var userPassword by remember { mutableStateOf("") }
 
-    var signUpId by remember { mutableStateOf("") }
-    var signUpPassword by remember { mutableStateOf("") }
+    val loginState = viewModel.loginState.collectAsState()
+
     var showPassword by remember { mutableStateOf(false) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            signUpId = result.data?.getStringExtra(SignUpActivity.SIGNUPID).orEmpty()
-            signUpPassword = result.data?.getStringExtra(SignUpActivity.SIGNUPPASSWORD).orEmpty()
-        }
-    }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -81,14 +78,13 @@ fun LogInScreen(
             val result = snackbarHostState
                 .showSnackbar(
                     message = "아이디와 비밀번호를 확인해주세요",
-                    actionLabel = context.getString(R.string.check),
+                    actionLabel = activity.getString(R.string.check),
                     duration = SnackbarDuration.Short
                 )
             when (result) {
                 SnackbarResult.ActionPerformed -> {
                     Toast.makeText(
-                        context,
-                        "id :$signUpId\npassword :$signUpPassword",
+                        activity, "id :${loginState.value.email}\npassword :${loginState.value.password}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -99,13 +95,9 @@ fun LogInScreen(
     }
 
     fun logInSuccess() {
-        Toast.makeText(context, "로그인 하였습니다", Toast.LENGTH_SHORT).show()
-        Intent(context, MyActivity::class.java).apply {
-            this.putExtra(SignUpActivity.PROFILEID, id)
-            flags =
-                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(this)
-        }
+        Toast.makeText(activity, "로그인 하였습니다", Toast.LENGTH_SHORT).show()
+        navigateToMyPage()
+        TODO("navigate 적용")
     }
 
     fun signUpCheck() {
@@ -118,12 +110,11 @@ fun LogInScreen(
                 )
             when (result) {
                 SnackbarResult.ActionPerformed -> {
-                    val intent = Intent(context, SignUpActivity::class.java)
-                    launcher.launch(intent)
+                    navigateToSignUp()
+                    TODO("navigate 적용")
                 }
 
-                SnackbarResult.Dismissed -> {
-                }
+                SnackbarResult.Dismissed -> Unit
             }
         }
     }
@@ -151,8 +142,8 @@ fun LogInScreen(
             Spacer(Modifier.padding(40.dp))
 
             LogInTextField(
-                textfield = id,
-                onValueChange = { text: String -> id = text },
+                textfield = loginState.value.email,
+                onValueChange = { text: String -> loginState.value.email = text },
                 placeholder = "이메일 주소 또는 아이디",
                 isShown = true,
                 keyboardOptions = KeyboardOptions(
@@ -178,12 +169,12 @@ fun LogInScreen(
                     if (showPassword) {
                         Text(
                             text = stringResource(R.string.hide),
-                            modifier = modifier.padding(7.dp)
+                            modifier = Modifier.padding(7.dp)
                         )
                     } else {
                         Text(
                             text = stringResource(R.string.show),
-                            modifier = modifier.padding(7.dp)
+                            modifier = Modifier.padding(7.dp)
                         )
                     }
                 }
@@ -197,7 +188,7 @@ fun LogInScreen(
                 Button(
                     onClick = {
                         if (signUpId.isNotBlank()) {
-                            if (!id.equals(signUpId) || !password.equals(signUpPassword)) {
+                            if (id != signUpId || password != signUpPassword) {
                                 logInFalse()
                             } else {
                                 logInSuccess()
@@ -216,6 +207,7 @@ fun LogInScreen(
                     onClick = {
                         val intent = Intent(context, SignUpActivity::class.java)
                         launcher.launch(intent)
+                        TODO("navigate 적용")
                     }
                 ) {
                     Text(text = "회원가입하기")
@@ -250,7 +242,7 @@ fun LogInScreen(
                 Image(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(3.dp)
                         .size(50.dp)
                 )
@@ -259,7 +251,7 @@ fun LogInScreen(
                 Image(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(3.dp)
                         .size(50.dp)
                 )
@@ -267,7 +259,7 @@ fun LogInScreen(
                 Image(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(3.dp)
                         .size(50.dp)
                 )
@@ -275,7 +267,7 @@ fun LogInScreen(
                 Image(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(3.dp)
                         .size(50.dp)
                 )
@@ -283,7 +275,7 @@ fun LogInScreen(
                 Image(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(3.dp)
                         .size(50.dp)
                 )
@@ -295,7 +287,7 @@ fun LogInScreen(
                     contentDescription = Icons.Default.Info.name,
                     modifier = Modifier.size(5.dp)
                 )
-                Spacer(modifier.padding(2.dp))
+                Spacer(Modifier.padding(2.dp))
                 Text(
                     text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
                     fontSize = 14.sp,
@@ -315,8 +307,3 @@ fun LogInScreen(
 }
 
 
-@Preview
-@Composable
-private fun SignInScreenPreview() {
-    LogInScreen()
-}
