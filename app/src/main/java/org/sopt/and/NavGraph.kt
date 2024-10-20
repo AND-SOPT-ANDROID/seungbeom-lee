@@ -1,56 +1,48 @@
 package org.sopt.and
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.input.key.Key.Companion.D
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.serialization.Serializable
+import org.sopt.and.screen.LogIn
 import org.sopt.and.screen.LogInScreen
+import org.sopt.and.screen.MyPage
 import org.sopt.and.screen.MyProfileScreen
+import org.sopt.and.screen.SignUp
 import org.sopt.and.screen.SignUpScreen
 
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.LogIn) {
-        composable<Screen.LogIn> {
+    NavHost(navController = navController, startDestination = LogIn) {
+        composable<LogIn> { backStackEntry ->
+            val signupState = backStackEntry.toRoute<LogIn>()
             LogInScreen(
                 navigateToMyPage = {
-                    navController.navigate(MyProfileScreen())
+                    navController.navigate(MyPage)
                 },
                 navigateToSignUp = {
-                    navController.navigate(SignUpScreen())
-                }
+                    navController.navigate(SignUp)
+                },
+                signUpState = signupState
             )
         }
 
-        composable<Screen.SignUp> { backStackEntry ->
+        composable<SignUp> {
             SignUpScreen(
-                navigateToC = { id, password ->
-                    navController.navigate(C(id, password))
+                navigateToLogIn = { id, password ->
+                    navController.navigate(LogIn(id, password))
                 }
             )
         }
 
-        composable<Screen.MyPage> {
-            MyProfileScreen(
-            )
+        composable<MyPage> {
+            MyProfileScreen()
         }
     }
 }
 
-@Serializable
-sealed class Screen() {
-    @Serializable
-    data object LogIn
 
-    @Serializable
-    data object SignUp
-
-    @Serializable
-    data object MyPage
-}

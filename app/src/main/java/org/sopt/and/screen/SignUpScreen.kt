@@ -1,8 +1,7 @@
 package org.sopt.and.screen
 
-import android.app.Activity
-import android.util.Patterns
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
@@ -39,32 +37,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.serialization.Serializable
 import org.sopt.and.R
 import org.sopt.and.component.SignUpTextField
-
-val passwordRegex =
-    "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!])(?=\\S+$).{8,20}$".toRegex()
+import org.sopt.and.findActivity
+import org.sopt.and.viewmodel.SignUpViewModel
+import org.sopt.and.viewmodel.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+@Serializable
+data object SignUp
 
 @Composable
-fun SignUpScreen() {
-    var showPassword by remember { mutableStateOf(false) }
-    var id by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun SignUpScreen(
+    navigateToLogIn: (id: String, password: String) -> Unit,
+) {
+    val viewModel = viewModel<SignUpViewModel>()
     val context = LocalContext.current
+    val activity = context.findActivity()
+
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val loginState = viewModel.signupState.collectAsStateWithLifecycle()
+    val id = loginState.value.email
+    val password = loginState.value.password
 
     fun dataCheck() {
-        id = id.trim()
-        password = password.trim()
-        if (!Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
-            Toast.makeText(context, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show()
-        } else if (!passwordRegex.matches(password)) {
+        if(!viewModel.isIdVaid()){
             Toast.makeText(
-                context, " 비밀번호는 8~20자 이내 영문 대소문 , 숫자, 특수문자 중\" +\n" +
-                        "            \"\n 3가지 이상 혼용하여 사용해주세요.", Toast.LENGTH_SHORT
+                activity,
+                activity.getString(R.string.uncorrect_email_regex_signup), Toast.LENGTH_SHORT
+            ).show()
+        } else if (!viewModel.isIdVaid()) {
+            Toast.makeText(
+                activity, activity.getString(R.string.signup_password_check_regex),
+                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            TODO("회원가입 정보 넘기기")
-            Toast.makeText(context, "회원가입에 성공하였습니다", Toast.LENGTH_SHORT).show()
+            navigateToLogIn(id,password)
+            Toast.makeText(activity, activity.getString(R.string.signup_success), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -90,7 +102,7 @@ fun SignUpScreen() {
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        (context as Activity).finish()
+                        navigateToLogIn("","")
                     },
                 tint = colorResource(R.color.exit)
             )
@@ -103,8 +115,7 @@ fun SignUpScreen() {
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "이메일과 비밀번호만으로" +
-                        "\n" + "Wavve를 즐길 수 있어요!",
+                text = stringResource(R.string.enjoy_wavve_id_signup),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 20.dp),
@@ -116,31 +127,30 @@ fun SignUpScreen() {
         Spacer(Modifier.padding(13.dp))
 
         SignUpTextField(
-            "로그인, 비밀번호 찾기,알림에 사용되니 정확한 이메일을 입력해\n주세요",
+            stringResource(R.string.please_enter_correct_signup),
             id,
-            { text: String -> id = text },
-            "wavve@example.com",
+            viewModel::setEmail,
+            stringResource(R.string.wavve_email),
             true,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next,
             )
         )
         SignUpTextField(
-            "비밀번호는 8~20자 이내 영문 대소문 , 숫자, 특수문자 중" +
-                    "\n 3가지 이상 혼용하여 사용해주세요",
+            stringResource(R.string.signup_password_check_regex),
             password,
-            { text: String -> password = text },
-            "Wavve 비밀번호 설정",
+            viewModel::setPassword,
+            stringResource(R.string.set_wavve_password_signup),
 
-            isShown = showPassword,
+            isShown = isPasswordVisible,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
             )
         ) {
             TextButton(
-                onClick = { showPassword = !showPassword },
+                onClick = { isPasswordVisible = !isPasswordVisible },
                 content = {
-                    if (showPassword) {
+                    if (isPasswordVisible) {
                         Text(
                             text = stringResource(R.string.hide), modifier = Modifier.padding(7.dp)
                         )
@@ -161,7 +171,7 @@ fun SignUpScreen() {
                     .background(color = colorResource(R.color.gray_a3))
             )
             Text(
-                text = "또는 다른 서비스 계정으로 가입",
+                text = stringResource(R.string.signup_another_state),
                 modifier = Modifier.padding(5.dp),
                 color = colorResource(R.color.gray_a3)
             )
@@ -174,73 +184,34 @@ fun SignUpScreen() {
 
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(15.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
-
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = Icons.Default.CheckCircle.name,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(50.dp)
-            )
+        Row {
+            EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
+                Image(
+                    imageVector = item,
+                    contentDescription = item.name,
+                    modifier = Modifier
+                        .padding(3.dp)
+                        .size(50.dp)
+                )
+            }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
+        Row {
+            Image(
                 imageVector = Icons.Default.Info,
                 contentDescription = Icons.Default.Info.name,
-                Modifier.size(5.dp)
+                modifier = Modifier
+                    .padding(top = 6.dp)
+                    .size(10.dp)
             )
             Spacer(Modifier.padding(2.dp))
             Text(
-                text = "SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
+                text = stringResource(R.string.sns_pooq_wavve),
                 fontSize = 14.sp,
                 color = colorResource(R.color.gray_63),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
-        Text(
-            text = "  존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
-                    "\n  참고 부탁드립니다.",
-            fontSize = 14.sp,
-            color = colorResource(R.color.gray_63),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
 
         Spacer(Modifier.padding(100.dp))
         OutlinedButton(
@@ -249,7 +220,7 @@ fun SignUpScreen() {
                 containerColor = colorResource(R.color.gray71)
             )
         ) {
-            Text(text = "Wavve 화원가입")
+            Text(text = stringResource(R.string.wavve_signup))
         }
     }
 }

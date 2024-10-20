@@ -50,7 +50,8 @@ fun SignUpTextField(
             onValueChange = onValueChange,
             trailingIcon = trailingIcon,
             placeholder = { Text(placeholder) },
-            visualTransformation = showPassword, singleLine = true,
+            visualTransformation = showPassword,
+            singleLine = true,
             keyboardOptions = keyboardOptions,
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -83,7 +84,7 @@ fun SignUpTextField(
 
 @Composable
 fun LogInTextField(
-    textfield: String,
+    textField: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
     isShown: Boolean,
@@ -101,7 +102,7 @@ fun LogInTextField(
 
     Column(modifier = Modifier) {
         TextField(
-            value = textfield,
+            value = textField,
             onValueChange = onValueChange,
             trailingIcon = trailingIcon,
             placeholder = { Text(placeholder) },
