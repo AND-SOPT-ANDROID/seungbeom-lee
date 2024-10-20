@@ -12,35 +12,48 @@ import org.sopt.and.screen.MyPage
 import org.sopt.and.screen.MyProfileScreen
 import org.sopt.and.screen.SignUp
 import org.sopt.and.screen.SignUpScreen
+import org.sopt.and.viewmodel.SignUpState
 
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = LogIn) {
+    NavHost(navController = navController, startDestination = LogIn("", "")) {
         composable<LogIn> { backStackEntry ->
-            val signupState = backStackEntry.toRoute<LogIn>()
+            val item = backStackEntry.toRoute<LogIn>()
+
             LogInScreen(
-                navigateToMyPage = {
-                    navController.navigate(MyPage)
+                navigateToMyPage = { email ->
+                    navController.navigate(MyPage(email)) {
+                            popUpTo<LogIn> {
+                                inclusive = true
+                        }
+                    }
                 },
                 navigateToSignUp = {
                     navController.navigate(SignUp)
                 },
-                signUpState = signupState
+                signUpState = SignUpState(item.email, item.password)
             )
         }
 
         composable<SignUp> {
             SignUpScreen(
                 navigateToLogIn = { id, password ->
-                    navController.navigate(LogIn(id, password))
+                    navController.navigate(LogIn(id, password)) {
+                        popUpTo(SignUp){inclusive = true}
+                        launchSingleTop = true
+                    }
+                },
+                navigateToBack = {
+                    navController.popBackStack()
                 }
             )
         }
 
-        composable<MyPage> {
-            MyProfileScreen()
+        composable<MyPage> { backStackEntry ->
+            val item = backStackEntry.toRoute<MyPage>()
+            MyProfileScreen(item.email)
         }
     }
 }

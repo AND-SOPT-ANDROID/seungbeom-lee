@@ -1,7 +1,5 @@
 package org.sopt.and.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +30,7 @@ class LogInViewModel : ViewModel() {
     }
 
     fun checkLoginData(email: String, password: String): Boolean =
-        _loginState.value == LoginState(email, password)
+        _loginState.value.email == email && _loginState.value.password == password
 
 }
 
