@@ -26,4 +26,15 @@
     <string name="signup_success">회원가입에 성공하였습니다</string>
     <string name="uncorrect_email_regex_signup">이메일 형식에 맞지 않습니다.</string>
     <string name="wavve_signup">Wavve 회원가입</string>
+    <string name="do_signup">회원가입하기</string>
+    <string name="please_signup">회원가입을 진행해주세요</string>
+    <string name="login_success_toast">로그인 하였습니다</string>
+    <string name="purchase_mypage"><![CDATA[구매하기  >]]></string>
+    <string name="first_month_pay100">첫 결제시 첫 달 100원!</string>
+    <string name="no_ticket_mypage">현재 보유하신 이용권이 없습니다.</string>
+    <string name="viewing_history_mypage">전체 시청 내역</string>
+    <string name="no_viewing_histoory_mypage">시청내역이 없어요</string>
+    <string name="no_like_program_mypage">관심프로그램이 없어요</string>
+    <string name="like_program_mypage">관심 프로그램</string>
+
 </resources>

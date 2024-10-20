@@ -45,12 +45,14 @@ import org.sopt.and.component.SignUpTextField
 import org.sopt.and.findActivity
 import org.sopt.and.viewmodel.SignUpViewModel
 import org.sopt.and.viewmodel.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+
 @Serializable
 data object SignUp
 
 @Composable
 fun SignUpScreen(
     navigateToLogIn: (id: String, password: String) -> Unit,
+    navigateToBack:() -> Unit
 ) {
     val viewModel = viewModel<SignUpViewModel>()
     val context = LocalContext.current
@@ -58,9 +60,9 @@ fun SignUpScreen(
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val loginState = viewModel.signupState.collectAsStateWithLifecycle()
-    val id = loginState.value.email
-    val password = loginState.value.password
+    val signUpState = viewModel.signupState.collectAsStateWithLifecycle()
+    val id = signUpState.value.email
+    val password = signUpState.value.password
 
     fun dataCheck() {
         if(!viewModel.isIdVaid()){
@@ -68,7 +70,7 @@ fun SignUpScreen(
                 activity,
                 activity.getString(R.string.uncorrect_email_regex_signup), Toast.LENGTH_SHORT
             ).show()
-        } else if (!viewModel.isIdVaid()) {
+        } else if (!viewModel.isPasswordValid()) {
             Toast.makeText(
                 activity, activity.getString(R.string.signup_password_check_regex),
                  Toast.LENGTH_SHORT
@@ -102,7 +104,7 @@ fun SignUpScreen(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        navigateToLogIn("","")
+                        navigateToBack()
                     },
                 tint = colorResource(R.color.exit)
             )

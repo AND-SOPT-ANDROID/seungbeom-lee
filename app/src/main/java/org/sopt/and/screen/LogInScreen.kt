@@ -48,11 +48,12 @@ import org.sopt.and.R
 import org.sopt.and.component.LogInTextField
 import org.sopt.and.findActivity
 import org.sopt.and.viewmodel.LogInViewModel
+import org.sopt.and.viewmodel.SignUpState
 import org.sopt.and.viewmodel.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 
 @Serializable
 data class LogIn(
-    val id: String,
+    val email: String,
     val password: String
 )
 
@@ -60,8 +61,8 @@ data class LogIn(
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: () -> Unit,
-    signUpState: LogIn
+    navigateToMyPage: (String) -> Unit,
+    signUpState: SignUpState
 ) {
     val viewModel = viewModel<LogInViewModel>()
 
@@ -89,7 +90,7 @@ fun LogInScreen(
                 SnackbarResult.ActionPerformed -> {
                     Toast.makeText(
                         activity,
-                        "id :${signUpState.id}\npassword :${signUpState.password}",
+                        "id :${signUpState.email}\npassword :${signUpState.password}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -100,23 +101,21 @@ fun LogInScreen(
     }
 
     fun logInSuccess() {
-        Toast.makeText(activity, "로그인 하였습니다", Toast.LENGTH_SHORT).show()
-        navigateToMyPage()
-        TODO("navigate 적용")
+        Toast.makeText(activity, context.getString(R.string.login_success_toast), Toast.LENGTH_SHORT).show()
+        navigateToMyPage(id)
     }
 
     fun signUpCheck() {
         scope.launch {
             val result = snackBarHostState
                 .showSnackbar(
-                    message = "회원가입을 진행해주세요",
-                    actionLabel = "회원가입하기",
+                    message = context.getString(R.string.please_signup),
+                    actionLabel = context.getString(R.string.do_signup),
                     duration = SnackbarDuration.Short
                 )
             when (result) {
                 SnackbarResult.ActionPerformed -> {
                     navigateToSignUp()
-                    TODO("navigate 적용")
                 }
 
                 SnackbarResult.Dismissed -> Unit
@@ -192,8 +191,8 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        if (id.isNotBlank()) {
-                            if (viewModel.checkLoginData(signUpState.id,signUpState.password)) {
+                        if (signUpState.email.isNotBlank()) {
+                            if (!viewModel.checkLoginData(signUpState.email,signUpState.password)) {
                                 logInFalse()
                             } else {
                                 logInSuccess()
@@ -273,7 +272,7 @@ fun LogInScreen(
 @OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
-private fun previw() {
-    LogInScreen({ }, {}, signUpState =LogIn("",""))
+private fun LoginScreenPreview() {
+    LogInScreen({ }, {}, signUpState = SignUpState("",""))
 }
 
