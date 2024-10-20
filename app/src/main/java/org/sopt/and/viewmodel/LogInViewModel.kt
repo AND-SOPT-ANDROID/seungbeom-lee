@@ -1,10 +1,11 @@
 package org.sopt.and.viewmodel
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.sopt.and.screen.passwordRegex
 
 class LogInViewModel : ViewModel() {
     private val _loginState = MutableStateFlow(LoginState())
@@ -30,8 +31,8 @@ class LogInViewModel : ViewModel() {
         }
     }
 
-    fun checkLoginData(loginState: LoginState): Boolean =
-        _loginState.value == loginState
+    fun checkLoginData(email: String, password: String): Boolean =
+        _loginState.value == LoginState(email, password)
 
 }
 

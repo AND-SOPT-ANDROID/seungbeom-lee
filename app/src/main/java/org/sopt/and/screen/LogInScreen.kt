@@ -1,10 +1,6 @@
 package org.sopt.and.screen
 
-import android.app.Activity
-import android.content.Intent
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -18,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -29,7 +24,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,49 +36,60 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
-import org.sopt.and.MyActivity
+import kotlinx.serialization.Serializable
 import org.sopt.and.R
 import org.sopt.and.component.LogInTextField
 import org.sopt.and.findActivity
 import org.sopt.and.viewmodel.LogInViewModel
+import org.sopt.and.viewmodel.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+
+@Serializable
+data class LogIn(
+    val id: String,
+    val password: String
+)
 
 @ExperimentalPermissionsApi
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: () -> Unit
+    navigateToMyPage: () -> Unit,
+    signUpState: LogIn
 ) {
-    val viewModel  = viewModel<LogInViewModel>()
+    val viewModel = viewModel<LogInViewModel>()
+
     val context = LocalContext.current
     val activity = context.findActivity()
 
-    var userId by remember { mutableStateOf("") }
-    var userPassword by remember { mutableStateOf("") }
+    val loginState = viewModel.loginState.collectAsStateWithLifecycle()
+    val id = loginState.value.email
+    val password = loginState.value.password
 
-    val loginState = viewModel.loginState.collectAsState()
-
-    var showPassword by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     fun logInFalse() {
         scope.launch {
-            val result = snackbarHostState
+            val result = snackBarHostState
                 .showSnackbar(
-                    message = "아이디와 비밀번호를 확인해주세요",
+                    message = activity.getString(R.string.check_id_password),
                     actionLabel = activity.getString(R.string.check),
                     duration = SnackbarDuration.Short
                 )
             when (result) {
                 SnackbarResult.ActionPerformed -> {
                     Toast.makeText(
-                        activity, "id :${loginState.value.email}\npassword :${loginState.value.password}",
+                        activity,
+                        "id :${signUpState.id}\npassword :${signUpState.password}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -102,7 +107,7 @@ fun LogInScreen(
 
     fun signUpCheck() {
         scope.launch {
-            val result = snackbarHostState
+            val result = snackBarHostState
                 .showSnackbar(
                     message = "회원가입을 진행해주세요",
                     actionLabel = "회원가입하기",
@@ -121,7 +126,7 @@ fun LogInScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         }
     ) { innerPadding ->
         Column(
@@ -142,9 +147,9 @@ fun LogInScreen(
             Spacer(Modifier.padding(40.dp))
 
             LogInTextField(
-                textfield = loginState.value.email,
-                onValueChange = { text: String -> loginState.value.email = text },
-                placeholder = "이메일 주소 또는 아이디",
+                textField = id,
+                onValueChange = viewModel::setEmail,
+                placeholder = stringResource(R.string.logintextfield_placeholder),
                 isShown = true,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
@@ -154,19 +159,19 @@ fun LogInScreen(
             Spacer(Modifier.padding(5.dp))
 
             LogInTextField(
-                textfield = password,
-                onValueChange = { text: String -> password = text },
+                textField = password,
+                onValueChange = viewModel::setPassword,
                 placeholder = stringResource(R.string.password),
-                isShown = showPassword,
+                isShown = isPasswordVisible,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                 )
             ) {
                 TextButton(
                     onClick = {
-                        showPassword = !showPassword
+                        isPasswordVisible = !isPasswordVisible
                     }) {
-                    if (showPassword) {
+                    if (isPasswordVisible) {
                         Text(
                             text = stringResource(R.string.hide),
                             modifier = Modifier.padding(7.dp)
@@ -187,8 +192,8 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        if (signUpId.isNotBlank()) {
-                            if (id != signUpId || password != signUpPassword) {
+                        if (id.isNotBlank()) {
+                            if (viewModel.checkLoginData(signUpState.id,signUpState.password)) {
                                 logInFalse()
                             } else {
                                 logInSuccess()
@@ -201,16 +206,14 @@ fun LogInScreen(
                         .fillMaxWidth()
                         .heightIn(min = 50.dp)
                 ) {
-                    Text(text = "로그인")
+                    Text(text = stringResource(R.string.login))
                 }
                 TextButton(
                     onClick = {
-                        val intent = Intent(context, SignUpActivity::class.java)
-                        launcher.launch(intent)
-                        TODO("navigate 적용")
+                        navigateToSignUp()
                     }
                 ) {
-                    Text(text = "회원가입하기")
+                    Text(text = stringResource(R.string.do_sign_up))
                 }
             }
 
@@ -224,7 +227,7 @@ fun LogInScreen(
                         .background(color = colorResource(R.color.gray_a3))
                 )
                 Text(
-                    text = "또는 다른 서비스 계정으로 가입",
+                    text = stringResource(R.string.signup_another_state),
                     modifier = Modifier.padding(5.dp),
                     color = colorResource(R.color.gray_a3)
                 )
@@ -235,75 +238,42 @@ fun LogInScreen(
                         .background(color = colorResource(R.color.gray_a3))
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(15.dp)
-            ) {
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
-
-                Image(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = Icons.Default.CheckCircle.name,
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .size(50.dp)
-                )
+            Row {
+                EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
+                    Image(
+                        imageVector = item,
+                        contentDescription = item.name,
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .size(50.dp)
+                    )
+                }
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row {
                 Image(
                     imageVector = Icons.Default.Info,
                     contentDescription = Icons.Default.Info.name,
-                    modifier = Modifier.size(5.dp)
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .size(10.dp)
                 )
                 Spacer(Modifier.padding(2.dp))
                 Text(
-                    text = "  SNS계정으로 간편하게 가입하여 이용하실 수 있습니다. 기",
+                    text = stringResource(R.string.sns_pooq_wavve),
                     fontSize = 14.sp,
                     color = colorResource(R.color.gray_63),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Text(
-                text = "    존 POOQ 계정 또는 Wavve 게정과는 연동되지 않으 이용에" +
-                        "\n    참고 부탁드립니다.",
-                fontSize = 14.sp,
-                color = colorResource(R.color.gray_63),
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+@Preview
+@Composable
+private fun previw() {
+    LogInScreen({ }, {}, signUpState =LogIn("",""))
+}
 

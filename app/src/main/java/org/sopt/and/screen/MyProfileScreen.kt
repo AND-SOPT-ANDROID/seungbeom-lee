@@ -24,13 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.Serializable
 import org.sopt.and.R
 import org.sopt.and.component.TextAndContent
 
-@Composable
-fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
-    val name = intent?.getStringExtra(SignUpActivity.PROFILEID).orEmpty()
+@Serializable
+data object MyPage
 
+
+@Composable
+fun MyProfileScreen( modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +54,7 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                         .padding()
                 )
                 Text(
-                    text = name,
+                    text = "이승범",
                     color = colorResource(R.color.white),
                     modifier = modifier
                         .padding(start = 5.dp)
