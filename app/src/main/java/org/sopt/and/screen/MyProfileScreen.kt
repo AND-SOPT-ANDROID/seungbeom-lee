@@ -29,7 +29,7 @@ import org.sopt.and.R
 import org.sopt.and.component.TextAndContent
 
 @Serializable
-data class MyPage(
+data class MyProFile(
     val email: String
 )
 
