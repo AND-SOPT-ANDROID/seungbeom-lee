@@ -125,7 +125,7 @@ fun LogInTextField(
 }
 
 @Composable
-fun TextAndContent(text: String, content: @Composable () -> Unit) {
+fun LikeTextAndContent(text: String, content: @Composable () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()

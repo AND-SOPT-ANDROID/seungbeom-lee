@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import org.sopt.and.R
-import org.sopt.and.component.TextAndContent
+import org.sopt.and.component.LikeTextAndContent
 
 @Serializable
 data class MyProFile(
@@ -110,7 +110,7 @@ fun MyProfileScreen(email: String) {
                 )
             }
         }
-        TextAndContent(text = stringResource(R.string.viewing_history_mypage)) {
+        LikeTextAndContent(text = stringResource(R.string.viewing_history_mypage)) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,7 +131,7 @@ fun MyProfileScreen(email: String) {
                 )
             }
         }
-        TextAndContent(stringResource(R.string.like_program_mypage)) {
+        LikeTextAndContent(stringResource(R.string.like_program_mypage)) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,

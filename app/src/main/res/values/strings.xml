@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">AND-ANDROID</string>
-    <string name="title_activity_sign_up">SignUpActivity</string>
-    <string name="title_activity_log_in">LogInActivity</string>
-    <string name="title_activity_my">MyActivity</string>
     <string name="home">홈</string>
     <string name="search">검색</string>
     <string name="myprofile">MY</string>
@@ -36,5 +33,7 @@
     <string name="no_viewing_histoory_mypage">시청내역이 없어요</string>
     <string name="no_like_program_mypage">관심프로그램이 없어요</string>
     <string name="like_program_mypage">관심 프로그램</string>
+    <string name="home_editor_recommend_content">믿고 보는 웨이브 에디터 추천작</string>
+    <string name="home_today_top20">오늘의 TOP 20</string>
 
 </resources>

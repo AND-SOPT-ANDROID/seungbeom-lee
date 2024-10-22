@@ -16,10 +16,8 @@ class MainViewModel : ViewModel() {
             )
         }
     }
-
-
 }
 
 data class BarStatus(
-    val bottomBarVisible: Boolean = false
+    val bottomBarVisible: Boolean = true
 )

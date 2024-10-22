@@ -23,7 +23,7 @@ import org.sopt.and.viewmodel.SignUpState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(navController: NavHostController, bottomBarVisible: (Boolean) -> Unit) {
-    NavHost(navController = navController, startDestination = LogIn("", "")) {
+    NavHost(navController = navController, startDestination = MyProFile(" ")) {
         composable<LogIn> { backStackEntry ->
             val item = backStackEntry.toRoute<LogIn>()
 

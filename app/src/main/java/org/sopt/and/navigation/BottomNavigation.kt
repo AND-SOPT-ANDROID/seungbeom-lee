@@ -1,6 +1,8 @@
 package org.sopt.and.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
@@ -8,11 +10,16 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -28,14 +35,15 @@ sealed class BottomNavItem(
     val screenRoute: Any
 ) {
     data object NavHome : BottomNavItem(R.string.home, Icons.Default.Home, Home)
-    data object NavSearch: BottomNavItem(R.string.search, Icons.Default.Search, Search)
+    data object NavSearch : BottomNavItem(R.string.search, Icons.Default.Search, Search)
     data object NavMyProfile :
         BottomNavItem(R.string.myprofile, Icons.Default.AccountCircle, MyProFile(""))
 }
 
 @Composable
 fun MyBottomNavigation(
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val items = listOf(
@@ -43,7 +51,10 @@ fun MyBottomNavigation(
         BottomNavItem.NavSearch,
         BottomNavItem.NavMyProfile
     )
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier.heightIn(max = 60.dp),
+        containerColor = Color.Black
+    ) {
         items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.screenRoute,
@@ -61,6 +72,17 @@ fun MyBottomNavigation(
                         contentDescription = item.icon.name
                     )
                 },
+                colors = NavigationBarItemColors(
+                    selectedIconColor = Color.White,
+                    selectedTextColor = Color.White,
+                    selectedIndicatorColor = Color.White,
+                    unselectedIconColor = colorResource(R.color.bar_item_white),
+                    unselectedTextColor = colorResource(R.color.bar_item_white),
+                    disabledIconColor =
+                    colorResource(R.color.bar_item_white),
+                    disabledTextColor =
+                    colorResource(R.color.bar_item_white)
+                ),
                 onClick = {
                     navController.navigate(item.screenRoute) {
                         navController.graph.startDestinationRoute?.let {
