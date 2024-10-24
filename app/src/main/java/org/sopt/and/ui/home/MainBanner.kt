@@ -1,4 +1,4 @@
-package org.sopt.and.component
+package org.sopt.and.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,10 +30,9 @@ fun MainBannerPager(bannerList: List<Int>, pagerState: PagerState) {
     val totalPageNum = bannerList.size
     HorizontalPager(
         modifier = Modifier
-            .fillMaxWidth()
-            ,
+            .fillMaxWidth(),
         state = pagerState,
-        key = { bannerList[it]},
+        key = { bannerList[it] },
         contentPadding = PaddingValues(end = 20.dp),
         pageSpacing = 10.dp,
     ) { page ->
@@ -43,7 +42,7 @@ fun MainBannerPager(bannerList: List<Int>, pagerState: PagerState) {
 }
 
 @Composable
-fun Banner(bannerImg : Int, index : Int, totalSize : Int) {
+fun Banner(bannerImg: Int, index: Int, totalSize: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

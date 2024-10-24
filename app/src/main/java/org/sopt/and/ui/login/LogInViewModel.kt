@@ -1,4 +1,4 @@
-package org.sopt.and.viewmodel
+package org.sopt.and.ui.login
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

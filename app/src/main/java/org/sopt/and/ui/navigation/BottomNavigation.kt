@@ -1,12 +1,6 @@
-package org.sopt.and.navigation
+package org.sopt.and.ui.navigation
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,21 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.sopt.and.R
-import org.sopt.and.screen.Home
-import org.sopt.and.screen.MyProFile
-import org.sopt.and.screen.Search
 
-
-sealed class BottomNavItem(
-    @StringRes val title: Int,
-    val icon: ImageVector,
-    val screenRoute: Any
-) {
-    data object NavHome : BottomNavItem(R.string.home, Icons.Default.Home, Home)
-    data object NavSearch : BottomNavItem(R.string.search, Icons.Default.Search, Search)
-    data object NavMyProfile :
-        BottomNavItem(R.string.myprofile, Icons.Default.AccountCircle, MyProFile(""))
-}
 
 @Composable
 fun MyBottomNavigation(

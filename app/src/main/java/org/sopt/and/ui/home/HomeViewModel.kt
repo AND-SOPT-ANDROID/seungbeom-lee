@@ -1,4 +1,4 @@
-package org.sopt.and.viewmodel
+package org.sopt.and.ui.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

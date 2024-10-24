@@ -1,4 +1,4 @@
-package org.sopt.and.component
+package org.sopt.and.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -31,16 +31,17 @@ fun Top20LazyList(imgList: List<Int>) {
         contentPadding = PaddingValues(end = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed( imgList,
-            key = { index ,_-> index },
-            contentType = { _,imgList -> imgList }) { index ,img ->
-            Top20Content(img,index+1)
+        itemsIndexed(imgList,
+            key = { index, _ -> index },
+            contentType = { _, imgList -> imgList }) { index, img ->
+            val ranking = index + 1
+            Top20Content(img = img, ranking = ranking)
         }
     }
 }
 
 @Composable
-fun Top20Content(img: Int,ranking : Int) {
+fun Top20Content(img: Int, ranking: Int) {
     Box(
         modifier = Modifier
             .width(240.dp)

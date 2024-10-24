@@ -1,4 +1,4 @@
-package org.sopt.and.component
+package org.sopt.and.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ fun ContentLazyList(imgList: List<Int>) {
         items(imgList,
             key = { index -> index },
             contentType = { imgList -> imgList }) { img ->
-            Content(img)
+            Content(img = img)
         }
     }
 }

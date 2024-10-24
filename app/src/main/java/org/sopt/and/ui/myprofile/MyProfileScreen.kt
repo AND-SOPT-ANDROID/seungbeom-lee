@@ -1,4 +1,4 @@
-package org.sopt.and.screen
+package org.sopt.and.ui.myprofile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,18 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.serialization.Serializable
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.component.LikeTextAndContent
-
-@Serializable
-data class MyProFile(
-    val email: String
-)
+import org.sopt.and.ui.component.LikeTextAndContent
 
 
 @Composable
-fun MyProfileScreen(email: String) {
+fun MyProfileScreen(email: String, password: String) {
+    val profileViewModel = viewModel<MyProfileViewModel>()
+    val profileState = profileViewModel.profileState.collectAsStateWithLifecycle()
+    val name = profileState.value.email
+    profileViewModel.setEmail(email)
+    profileViewModel.setPassword(password)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +57,7 @@ fun MyProfileScreen(email: String) {
                         .padding()
                 )
                 Text(
-                    text = email,
+                    text = name,
                     color = colorResource(R.color.white),
                     modifier = Modifier
                         .padding(start = 5.dp)

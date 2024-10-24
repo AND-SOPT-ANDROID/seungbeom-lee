@@ -1,4 +1,4 @@
-package org.sopt.and.viewmodel
+package org.sopt.and.ui.main
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,5 +19,5 @@ class MainViewModel : ViewModel() {
 }
 
 data class BarStatus(
-    val bottomBarVisible: Boolean = true
+    val bottomBarVisible: Boolean = false
 )

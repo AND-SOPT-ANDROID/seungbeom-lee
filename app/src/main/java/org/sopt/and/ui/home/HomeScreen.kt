@@ -1,4 +1,4 @@
-package org.sopt.and.screen
+package org.sopt.and.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,25 +36,20 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.serialization.Serializable
 import org.sopt.and.R
-import org.sopt.and.component.Banner
-import org.sopt.and.component.ContentLazyList
-import org.sopt.and.component.MainBannerPager
-import org.sopt.and.component.Top20LazyList
-import org.sopt.and.viewmodel.HomeViewModel
 
-@Serializable
-data object Home
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     val homeViewModel = viewModel<HomeViewModel>()
+
     val uiState = homeViewModel.uiState
     val genreList = uiState.value.genreList
     val bannerList = uiState.value.mainBannerList
     val editorRecommendList = uiState.value.editorRecomendList
     val top20List = uiState.value.top20List
+
     val scrollState = rememberScrollState()
-    val pagerState = rememberPagerState(pageCount = { 6 })
+    val pagerState = rememberPagerState(pageCount = { bannerList.size })
     Column(
         modifier = Modifier
             .fillMaxSize()

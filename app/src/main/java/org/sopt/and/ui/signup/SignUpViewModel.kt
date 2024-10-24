@@ -1,4 +1,4 @@
-package org.sopt.and.viewmodel
+package org.sopt.and.ui.signup
 
 import android.util.Patterns
 import androidx.compose.material.icons.Icons
@@ -33,10 +33,10 @@ class SignUpViewModel : ViewModel() {
         }
     }
 
-     fun isIdVaid(): Boolean =
+    fun isIdValid(): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(_signupState.value.email).matches()
 
-     fun isPasswordValid(): Boolean {
+    fun isPasswordValid(): Boolean {
         val password = _signupState.value.password
 
         if (password.length in PASSWORD_LENGTH_MIN..PASSWORD_LENGTH_MAX) {
