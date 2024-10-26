@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">AND-ANDROID</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="title_activity_my">MyActivity</string>
+    <string name="home">홈</string>
+    <string name="search">검색</string>
+    <string name="myprofile">MY</string>
+    <string name="wavve">Wavve</string>
+    <string name="signup">회원가입</string>
+    <string name="password">비밀번호</string>
+    <string name="check">확인하기</string>
+    <string name="show">show</string>
+    <string name="hide">hide</string>
 </resources>
