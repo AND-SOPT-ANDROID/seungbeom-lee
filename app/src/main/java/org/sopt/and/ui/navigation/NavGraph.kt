@@ -17,8 +17,13 @@ import org.sopt.and.ui.signup.SignUpState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun NavGraph(navController: NavHostController, bottomBarVisible: (Boolean) -> Unit) {
-    NavHost(navController = navController, startDestination = Route.LogIn("", "")) {
+fun NavGraph(
+    navController: NavHostController, bottomBarVisible: (Boolean) -> Unit
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Route.LogIn("", "")
+    ) {
         composable<Route.LogIn> { backStackEntry ->
             val item = backStackEntry.toRoute<Route.LogIn>()
             LogInScreen(

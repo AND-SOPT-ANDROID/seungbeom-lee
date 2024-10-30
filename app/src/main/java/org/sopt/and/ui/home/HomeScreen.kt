@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.serialization.Serializable
 import org.sopt.and.R
 
 
@@ -83,11 +84,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             )
         }
         Spacer(Modifier.height(30.dp))
-        Row(
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            genreList.forEach { genre ->
+            items(genreList){ genre ->
                 Text(
                     text = genre,
                     color = colorResource(R.color.gray_a3),

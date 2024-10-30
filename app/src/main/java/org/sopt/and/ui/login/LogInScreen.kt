@@ -1,5 +1,6 @@
 package org.sopt.and.ui.login
 
+import LogInTextField
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,7 +51,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import org.sopt.and.R
-import org.sopt.and.ui.component.LogInTextField
 import org.sopt.and.ui.component.findActivity
 import org.sopt.and.ui.signup.SignUpState
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST

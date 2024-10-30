@@ -64,7 +64,4 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     //viewmodel
-    implementation(libs.androidx.navigation.compose)
-
-
 }

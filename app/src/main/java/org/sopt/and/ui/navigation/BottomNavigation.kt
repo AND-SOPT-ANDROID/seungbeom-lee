@@ -20,7 +20,7 @@ import org.sopt.and.R
 
 
 @Composable
-fun MyBottomNavigation(
+fun BottomNavigation(
     navController: NavHostController
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()

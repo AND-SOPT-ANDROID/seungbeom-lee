@@ -3,6 +3,8 @@ package org.sopt.and.ui.signup
 import android.util.Patterns
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,10 +14,8 @@ class SignUpViewModel : ViewModel() {
     private val _signupState = MutableStateFlow(SignUpState())
     val signupState = _signupState.asStateFlow()
 
-
-    fun initSignUpState() {
-        _signupState.value = SignUpState()
-    }
+    private val _snackbarMessage = mutableStateOf("")
+    val snackbarMessage: State<String> = _snackbarMessage
 
     fun setEmail(email: String) {
         _signupState.update {
@@ -49,6 +49,25 @@ class SignUpViewModel : ViewModel() {
             if (count >= PASSWORD_TYPE) return true
         }
         return false
+    }
+
+    fun dataCheck(navigateToLogIn : (id:String,password:String)-> Unit){
+        when {
+            !isIdValid() ->
+                _snackbarMessage.value = "잘못된 이메일 형식입니다."
+
+            !isPasswordValid() ->
+                _snackbarMessage.value = "잘못된 비밀번호 형식입니다."
+
+            else -> {
+                _snackbarMessage.value = "회원가입 되었습니다."
+                navigateToLogIn(_signupState.value.email,_signupState.value.password)
+            }
+        }
+    }
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
     }
 
     companion object {

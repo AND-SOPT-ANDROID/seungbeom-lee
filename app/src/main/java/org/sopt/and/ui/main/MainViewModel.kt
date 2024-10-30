@@ -6,18 +6,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class MainViewModel : ViewModel() {
-    private val _bottomBarVisible = MutableStateFlow(BarStatus())
+    private val _bottomBarVisible = MutableStateFlow(false)
     val bottomBarVisible = _bottomBarVisible.asStateFlow()
 
     fun setBarVisible(isVisible: Boolean) {
-        _bottomBarVisible.update {
-            it.copy(
-                bottomBarVisible = isVisible
-            )
-        }
+        _bottomBarVisible.value = isVisible
     }
 }
-
-data class BarStatus(
-    val bottomBarVisible: Boolean = false
-)

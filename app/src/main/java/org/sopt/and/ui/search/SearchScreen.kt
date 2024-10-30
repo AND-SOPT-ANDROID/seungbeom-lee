@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(modifier: Modifier = Modifier){
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

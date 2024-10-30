@@ -21,8 +21,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.sopt.and.R
 
 @Composable
 fun Top20LazyList(imgList: List<Int>) {
@@ -43,6 +45,7 @@ fun Top20LazyList(imgList: List<Int>) {
 @Composable
 fun Top20Content(img: Int, ranking: Int) {
     Box(
+        contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .width(240.dp)
             .height(360.dp)
@@ -52,20 +55,20 @@ fun Top20Content(img: Int, ranking: Int) {
             painter = painterResource(id = img),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Box(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(8.dp)
-        ) {
-            Text(
-                text = ranking.toString(),
-                color = Color.White,
-                fontSize = 50.sp,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic
-            )
-        }
+                .fillMaxSize()
+                .padding(bottom = 25.dp)
+
+        )
+
+        Text(
+            text = ranking.toString(),
+            color = Color.White,
+            fontSize = 50.sp,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier.padding(start = 15.dp)
+        )
     }
 }
+

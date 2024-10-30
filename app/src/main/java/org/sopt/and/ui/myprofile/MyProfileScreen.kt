@@ -23,11 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.ui.component.LikeTextAndContent
 
 
 @Composable
@@ -90,9 +91,9 @@ fun MyProfileScreen(email: String, password: String) {
                 )
             }
 
-            Spacer(Modifier.padding(10.dp))
             Spacer(
                 Modifier
+                    .padding(10.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(colorResource(R.color.black))
@@ -156,3 +157,20 @@ fun MyProfileScreen(email: String, password: String) {
     }
 }
 
+
+@Composable
+fun LikeTextAndContent(text: String, content: @Composable () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        Text(
+            text = text,
+            color = colorResource(R.color.white),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        content()
+    }
+}

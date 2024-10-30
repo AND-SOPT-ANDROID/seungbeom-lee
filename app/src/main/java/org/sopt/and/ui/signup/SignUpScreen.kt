@@ -1,6 +1,5 @@
 package org.sopt.and.ui.signup
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,9 +20,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,8 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.ui.component.SignUpTextField
-import org.sopt.and.ui.component.findActivity
+import org.sopt.and.ui.component.textfield.SignUpTextField
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 
 
@@ -54,7 +56,6 @@ fun SignUpScreen(
 ) {
     val viewModel = viewModel<SignUpViewModel>()
     val context = LocalContext.current
-    val activity = context.findActivity()
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -62,190 +63,186 @@ fun SignUpScreen(
     val id = signUpState.value.email
     val password = signUpState.value.password
 
-    fun dataCheck() {
-        if (!viewModel.isIdValid()) {
-            Toast.makeText(
-                activity,
-                activity.getString(R.string.uncorrect_email_regex_signup), Toast.LENGTH_SHORT
-            ).show()
-        } else if (!viewModel.isPasswordValid()) {
-            Toast.makeText(
-                activity, activity.getString(R.string.signup_password_check_regex),
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            navigateToLogIn(id, password)
-            Toast.makeText(
-                activity,
-                activity.getString(R.string.signup_success),
-                Toast.LENGTH_SHORT
-            )
-                .show()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarMessage by viewModel.snackbarMessage
+
+    if (snackbarMessage.isNotEmpty()) {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar(snackbarMessage)
+            viewModel.clearSnackbarMessage()
         }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(R.color.basic_background))
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(Modifier)
-                Text(
-                    text = stringResource(R.string.signup),
-                    fontSize = 20.sp, modifier = Modifier, color = colorResource(R.color.white)
-                )
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = Icons.Default.Clear.name,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clickable {
-                            navigateToBack()
-                        },
-                    tint = colorResource(R.color.exit)
-                )
-            }
-
-            Spacer(Modifier.padding(13.dp))
-
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        content = { innerpadding ->
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = colorResource(R.color.basic_background))
+                    .padding(innerpadding)
             ) {
-                Text(
-                    text = stringResource(R.string.enjoy_wavve_id_signup),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 20.dp),
-                    color = colorResource(R.color.white)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Spacer(Modifier)
+                        Text(
+                            text = stringResource(R.string.signup),
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            color = colorResource(R.color.white)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = Icons.Default.Clear.name,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable {
+                                    navigateToBack()
+                                },
+                            tint = colorResource(R.color.exit)
+                        )
+                    }
 
-                )
-            }
+                    Spacer(Modifier.padding(13.dp))
 
-            Spacer(Modifier.padding(13.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = stringResource(R.string.enjoy_wavve_id_signup),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 20.dp),
+                            color = colorResource(R.color.white)
 
-            SignUpTextField(
-                text = stringResource(R.string.please_enter_correct_signup),
-                textField = id,
-                onValueChange = viewModel::setEmail,
-                placeholder = stringResource(R.string.wavve_email),
-                isShown = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                )
-            )
-            SignUpTextField(
-                text = stringResource(R.string.signup_password_check_regex),
-                textField = password,
-                onValueChange = viewModel::setPassword,
-                placeholder = stringResource(R.string.set_wavve_password_signup),
-                isShown = isPasswordVisible,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                )
-            ) {
-                TextButton(
-                    onClick = { isPasswordVisible = !isPasswordVisible },
-                    content = {
-                        if (isPasswordVisible) {
-                            Text(
-                                text = stringResource(R.string.hide),
-                                modifier = Modifier.padding(7.dp),
-                                color = Color.White
-                            )
-                        } else {
-                            Text(
-                                text = stringResource(R.string.show),
-                                modifier = Modifier.padding(7.dp),
-                                color = Color.White
+                        )
+                    }
+
+                    Spacer(Modifier.padding(13.dp))
+
+                    SignUpTextField(
+                        text = stringResource(R.string.please_enter_correct_signup),
+                        textField = id,
+                        onValueChange = viewModel::setEmail,
+                        placeholder = stringResource(R.string.wavve_email),
+                        isShown = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                        )
+                    )
+                    SignUpTextField(
+                        text = stringResource(R.string.signup_password_check_regex),
+                        textField = password,
+                        onValueChange = viewModel::setPassword,
+                        placeholder = stringResource(R.string.set_wavve_password_signup),
+                        isShown = isPasswordVisible,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                        )
+                    ) {
+                        TextButton(
+                            onClick = { isPasswordVisible = !isPasswordVisible },
+                            content = {
+                                if (isPasswordVisible) {
+                                    Text(
+                                        text = stringResource(R.string.hide),
+                                        modifier = Modifier.padding(7.dp),
+                                        color = Color.White
+                                    )
+                                } else {
+                                    Text(
+                                        text = stringResource(R.string.show),
+                                        modifier = Modifier.padding(7.dp),
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(
+                            Modifier
+                                .height(1.dp)
+                                .width(100.dp)
+                                .background(color = colorResource(R.color.gray_a3))
+                        )
+                        Text(
+                            text = stringResource(R.string.signup_another_state),
+                            modifier = Modifier.padding(5.dp),
+                            color = colorResource(R.color.gray_a3)
+                        )
+                        Spacer(
+                            Modifier
+                                .height(1.dp)
+                                .width(100.dp)
+                                .background(color = colorResource(R.color.gray_a3))
+                        )
+
+                    }
+
+                    Row {
+                        EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
+                            Image(
+                                imageVector = item,
+                                contentDescription = item.name,
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .size(50.dp)
                             )
                         }
                     }
-                )
-            }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Spacer(
-                    Modifier
-                        .height(1.dp)
-                        .width(100.dp)
-                        .background(color = colorResource(R.color.gray_a3))
-                )
-                Text(
-                    text = stringResource(R.string.signup_another_state),
-                    modifier = Modifier.padding(5.dp),
-                    color = colorResource(R.color.gray_a3)
-                )
-                Spacer(
-                    Modifier
-                        .height(1.dp)
-                        .width(100.dp)
-                        .background(color = colorResource(R.color.gray_a3))
-                )
+                    Row {
+                        Image(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = Icons.Default.Info.name,
+                            modifier = Modifier
+                                .padding(top = 6.dp)
+                                .size(10.dp)
+                        )
+                        Spacer(Modifier.padding(2.dp))
+                        Text(
+                            text = stringResource(R.string.sns_pooq_wavve),
+                            fontSize = 14.sp,
+                            color = colorResource(R.color.gray_63),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
 
-            }
-
-            Row {
-                EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
-                    Image(
-                        imageVector = item,
-                        contentDescription = item.name,
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .size(50.dp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 60.dp, max = 80.dp)
+                        .background(color = colorResource(R.color.signup_button_gray))
+                        .alpha(0.7f)
+                        .clickable {
+                            viewModel.dataCheck(navigateToLogIn = navigateToLogIn)
+                        }
+                ) {
+                    Text(
+                        text = stringResource(R.string.wavve_signup),
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
-
-            Row {
-                Image(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = Icons.Default.Info.name,
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .size(10.dp)
-                )
-                Spacer(Modifier.padding(2.dp))
-                Text(
-                    text = stringResource(R.string.sns_pooq_wavve),
-                    fontSize = 14.sp,
-                    color = colorResource(R.color.gray_63),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 60.dp, max = 80.dp)
-                .background(color = colorResource(R.color.signup_button_gray))
-                .alpha(0.7f)
-                .clickable {
-                    dataCheck()
-                }
-        ) {
-            Text(
-                text = stringResource(R.string.wavve_signup),
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-
+    )
 }
+
+
 
 
