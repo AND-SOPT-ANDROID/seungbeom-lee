@@ -1,6 +1,5 @@
-package org.sopt.and.screen
+package org.sopt.and.ui.myprofile
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,15 +22,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.SignUpActivity
-import org.sopt.and.component.TextAndLikeContent
+
 
 @Composable
-fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
-    val name = intent?.getStringExtra(SignUpActivity.PROFILE_ID)?: "이승범"
-
+fun MyProfileScreen(email: String, password: String) {
+    val profileViewModel = viewModel<MyProfileViewModel>()
+    val profileState = profileViewModel.profileState.collectAsStateWithLifecycle()
+    val name = profileState.value.email
+    profileViewModel.setEmail(email)
+    profileViewModel.setPassword(password)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,24 +53,24 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 Image(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = Icons.Default.AccountCircle.name,
-                    modifier = modifier
+                    modifier = Modifier
                         .size(70.dp)
                         .padding()
                 )
                 Text(
                     text = name,
                     color = colorResource(R.color.white),
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(start = 5.dp)
                         .weight(1f)
                 )
-                Spacer(modifier.padding(10.dp))
+                Spacer(Modifier.padding(10.dp))
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = Icons.Default.Notifications.name,
                     tint = colorResource(R.color.white)
                 )
-                Spacer(modifier.padding(10.dp))
+                Spacer(Modifier.padding(10.dp))
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = Icons.Default.Settings.name,
@@ -72,76 +78,78 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
                 )
             }
 
-            Spacer(modifier.padding(10.dp))
+            Spacer(Modifier.padding(10.dp))
             Column {
                 Text(
-                    text = "첫 결제시 첫 달 100원!",
+                    text = stringResource(R.string.first_month_pay100),
                     color = colorResource(R.color.gray_63),
-                    modifier = modifier.padding(bottom = 5.dp)
+                    modifier = Modifier.padding(bottom = 5.dp)
                 )
                 Text(
-                    text = "구매하기  >",
+                    text = stringResource(R.string.purchase_mypage),
                     color = colorResource(R.color.white)
                 )
             }
 
-
             Spacer(
                 Modifier
-                    .padding(top = 20.dp)
+                    .padding(10.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(colorResource(R.color.black))
             )
             Column {
                 Text(
-                    text = "현재 보유하신 이용권이 없습니다.",
+                    text = stringResource(R.string.no_ticket_mypage),
                     color = colorResource(R.color.gray_63),
-                    modifier = modifier.padding(top = 5.dp, bottom = 5.dp)
+                    modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
 
                 )
                 Text(
-                    text = "구매하기  >",
+                    text = stringResource(R.string.purchase_mypage),
                     color = colorResource(R.color.white),
-                    modifier = modifier.padding(bottom = 10.dp)
-
+                    modifier = Modifier.padding(bottom = 10.dp)
                 )
             }
         }
-        TextAndLikeContent(text = "전체 시청 내역") {
+        LikeTextAndContent(text = stringResource(R.string.viewing_history_mypage)) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier.fillMaxWidth().height(225.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(225.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = Icons.Default.Info.name,
-                    modifier = modifier.size(60.dp),
+                    modifier = Modifier.size(60.dp),
                     tint = colorResource(R.color.gray_a3)
                 )
-                Spacer(modifier.padding(5.dp))
+                Spacer(Modifier.padding(5.dp))
                 Text(
-                    text = "시청내역이 없어요",
+                    text = stringResource(R.string.no_viewing_histoory_mypage),
                     color = colorResource(R.color.gray_a3)
                 )
             }
         }
-        TextAndLikeContent("관심 프로그램") {
+        LikeTextAndContent(stringResource(R.string.like_program_mypage)) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier.fillMaxWidth().height(225.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(225.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = Icons.Default.Info.name,
-                    modifier = modifier.size(60.dp),
+                    modifier = Modifier.size(60.dp),
                     tint = colorResource(R.color.gray_a3)
                 )
-                Spacer(modifier.padding(5.dp))
+                Spacer(Modifier.padding(5.dp))
                 Text(
-                    text = "관심프로그램이 없어요",
+                    text = stringResource(R.string.no_like_program_mypage),
                     color = colorResource(R.color.gray_a3)
                 )
             }
@@ -149,3 +157,20 @@ fun MyProfileScreen(intent : Intent?, modifier: Modifier = Modifier) {
     }
 }
 
+
+@Composable
+fun LikeTextAndContent(text: String, content: @Composable () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        Text(
+            text = text,
+            color = colorResource(R.color.white),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        content()
+    }
+}

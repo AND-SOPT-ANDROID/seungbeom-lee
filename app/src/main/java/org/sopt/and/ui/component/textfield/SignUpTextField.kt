@@ -1,4 +1,4 @@
-package org.sopt.and.component
+package org.sopt.and.ui.component.textfield
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -79,64 +78,5 @@ fun SignUpTextField(
                     .padding(7.dp), color = colorResource(R.color.gray_a3)
             )
         }
-    }
-}
-
-@Composable
-fun LogInTextField(
-    textfield: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    isShown: Boolean,
-    keyboardOptions: KeyboardOptions,
-    trailingIcon: @Composable (() -> Unit)? = null
-) {
-    val showPassword = remember(isShown) {
-        if (!isShown) {
-            PasswordVisualTransformation()
-        } else {
-            VisualTransformation.None
-        }
-    }
-    val focusManager = LocalFocusManager.current
-
-    Column(modifier = Modifier) {
-        TextField(
-            value = textfield,
-            onValueChange = onValueChange,
-            trailingIcon = trailingIcon,
-            placeholder = { Text(placeholder) },
-            visualTransformation = showPassword,
-            singleLine = true,
-            keyboardOptions = keyboardOptions, keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus(true)
-                },
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }),
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = colorResource(R.color.textfield_gray2f)
-            )
-        )
-    }
-}
-
-@Composable
-fun TextAndLikeContent(text: String, content: @Composable () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(15.dp)
-    ) {
-        Text(
-            text = text,
-            color = colorResource(R.color.white),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        content()
     }
 }
