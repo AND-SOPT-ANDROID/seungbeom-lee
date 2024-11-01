@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
+import org.sopt.and.ui.home.component.ContentLazyList
+import org.sopt.and.ui.home.component.MainBannerPager
+import org.sopt.and.ui.home.component.Top20LazyList
 
 
 @Composable
@@ -44,13 +47,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val homeViewModel = viewModel<HomeViewModel>()
 
     val uiState = homeViewModel.uiState
-    val genreList = uiState.value.genreList
-    val bannerList = uiState.value.mainBannerList
-    val editorRecommendList = uiState.value.editorRecomendList
-    val top20List = uiState.value.top20List
-
     val scrollState = rememberScrollState()
-    val pagerState = rememberPagerState(pageCount = { bannerList.size })
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,7 +86,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            items(genreList){ genre ->
+            items(uiState.value.genreList){ genre ->
                 Text(
                     text = genre,
                     color = colorResource(R.color.gray_a3),
@@ -98,18 +96,18 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
         Spacer(Modifier.height(20.dp))
 
-        MainBannerPager(bannerList, pagerState)
+        MainBannerPager(uiState.value.mainBannerList)
 
         Spacer(Modifier.height(20.dp))
 
         RecommendedContent(stringResource(R.string.home_editor_recommend_content), true) {
-            ContentLazyList(editorRecommendList)
+            ContentLazyList(uiState.value.editorRecomendList)
         }
 
         Spacer(Modifier.height(20.dp))
 
         RecommendedContent(stringResource(R.string.home_today_top20), false) {
-            Top20LazyList(top20List)
+            Top20LazyList(uiState.value.top20List)
         }
     }
 }
