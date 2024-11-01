@@ -49,7 +49,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
 import org.sopt.and.ui.ShowSnackBar
-import org.sopt.and.ui.component.textfield.SignUpTextField
+import org.sopt.and.ui.component.textfield.UserInfoTextField
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 import org.sopt.and.ui.toast
 
@@ -150,44 +150,47 @@ fun SignUpScreen(
 
                     Spacer(Modifier.padding(13.dp))
 
-                    SignUpTextField(
-                        text = stringResource(R.string.please_enter_correct_signup),
+                    UserInfoTextField(
                         textField = id,
                         onValueChange = viewModel::setEmail,
                         placeholder = stringResource(R.string.wavve_email),
                         isShown = true,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
-                        )
+                        ),
+                        infoText = stringResource(R.string.please_enter_correct_signup),
                     )
-                    SignUpTextField(
-                        text = stringResource(R.string.signup_password_check_regex),
+                    UserInfoTextField(
                         textField = password,
                         onValueChange = viewModel::setPassword,
                         placeholder = stringResource(R.string.set_wavve_password_signup),
                         isShown = isPasswordVisible,
+                        trailingIcon = {
+                            TextButton(
+                                onClick = { isPasswordVisible = !isPasswordVisible },
+                                content = {
+                                    if (isPasswordVisible) {
+                                        Text(
+                                            text = stringResource(R.string.hide),
+                                            modifier = Modifier.padding(7.dp),
+                                            color = Color.White
+                                        )
+                                    } else {
+                                        Text(
+                                            text = stringResource(R.string.show),
+                                            modifier = Modifier.padding(7.dp),
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
-                        )
-                    ) {
-                        TextButton(
-                            onClick = { isPasswordVisible = !isPasswordVisible },
-                            content = {
-                                if (isPasswordVisible) {
-                                    Text(
-                                        text = stringResource(R.string.hide),
-                                        modifier = Modifier.padding(7.dp),
-                                        color = Color.White
-                                    )
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.show),
-                                        modifier = Modifier.padding(7.dp),
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        )
+                        ),
+                        infoText = stringResource(R.string.signup_password_check_regex),
+
+                        ) {
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {

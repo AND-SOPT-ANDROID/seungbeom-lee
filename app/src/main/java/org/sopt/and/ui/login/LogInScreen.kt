@@ -1,6 +1,5 @@
 package org.sopt.and.ui.login
 
-import LogInTextField
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +51,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.sopt.and.R
 import org.sopt.and.ui.ShowSnackBar
 import org.sopt.and.ui.component.findActivity
+import org.sopt.and.ui.component.textfield.UserInfoTextField
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 import org.sopt.and.ui.signup.UserInfo
 import org.sopt.and.ui.toast
@@ -81,7 +81,7 @@ fun LogInScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(viewModel.signInSideEffect, snackBarHostState, lifecycleOwner) {
-        viewModel.signInSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle,)
+        viewModel.signInSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is SignInSideEffect.ShowToast -> {
@@ -134,7 +134,7 @@ fun LogInScreen(
             }
             Spacer(Modifier.padding(40.dp))
 
-            LogInTextField(
+            UserInfoTextField(
                 textField = id,
                 onValueChange = viewModel::setEmail,
                 placeholder = stringResource(R.string.logintextfield_placeholder),
@@ -146,7 +146,7 @@ fun LogInScreen(
 
             Spacer(Modifier.padding(5.dp))
 
-            LogInTextField(
+            UserInfoTextField(
                 textField = password,
                 onValueChange = viewModel::setPassword,
                 placeholder = stringResource(R.string.password),
