@@ -1,18 +1,18 @@
 package org.sopt.and.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import org.sopt.and.model.Route
 import org.sopt.and.ui.home.HomeScreen
 import org.sopt.and.ui.login.LogInScreen
 import org.sopt.and.ui.myprofile.MyProfileScreen
 import org.sopt.and.ui.search.SearchScreen
 import org.sopt.and.ui.signup.SignUpScreen
-import org.sopt.and.ui.signup.SignUpState
+import org.sopt.and.ui.signup.UserInfo
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -38,7 +38,7 @@ fun NavGraph(
                 navigateToSignUp = {
                     navController.navigate(Route.SignUp)
                 },
-                signUpState = SignUpState(item.email, item.password)
+                signUpState = UserInfo(item.email, item.password)
             )
         }
 

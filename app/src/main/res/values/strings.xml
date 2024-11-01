@@ -35,5 +35,8 @@
     <string name="like_program_mypage">관심 프로그램</string>
     <string name="home_editor_recommend_content">믿고 보는 웨이브 에디터 추천작</string>
     <string name="home_today_top20">오늘의 TOP 20</string>
+    <string name="sign_up_not_valid_email">잘못된 이메일 형식입니다.</string>
+    <string name="sign_up_not_valid_password">잘못된 비밀번호 형식입니다.</string>
+    <string name="sign_up_signup_success">회원가입 되었습니다</string>
 
 </resources>

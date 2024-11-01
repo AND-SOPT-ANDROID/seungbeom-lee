@@ -3,19 +3,22 @@ package org.sopt.and.ui.signup
 import android.util.Patterns
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.sopt.and.R
 
 class SignUpViewModel : ViewModel() {
-    private val _signupState = MutableStateFlow(SignUpState())
+    private val _signupState = MutableStateFlow(UserInfo())
     val signupState = _signupState.asStateFlow()
 
-    private val _snackbarMessage = mutableStateOf("")
-    val snackbarMessage: State<String> = _snackbarMessage
+    private val _signUpSideEffect = MutableSharedFlow<SignUpSideEffect>()
+    val signUpSideEffect get() = _signUpSideEffect.asSharedFlow()
 
     fun setEmail(email: String) {
         _signupState.update {
@@ -33,10 +36,10 @@ class SignUpViewModel : ViewModel() {
         }
     }
 
-    fun isIdValid(): Boolean =
+   private fun isIdValid(): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(_signupState.value.email).matches()
 
-    fun isPasswordValid(): Boolean {
+   private fun isPasswordValid(): Boolean {
         val password = _signupState.value.password
 
         if (password.length in PASSWORD_LENGTH_MIN..PASSWORD_LENGTH_MAX) {
@@ -52,23 +55,22 @@ class SignUpViewModel : ViewModel() {
     }
 
     fun dataCheck(navigateToLogIn : (id:String,password:String)-> Unit){
-        when {
-            !isIdValid() ->
-                _snackbarMessage.value = "잘못된 이메일 형식입니다."
+        viewModelScope.launch {
+            when {
+                !isIdValid() ->
+                    _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_email))
 
-            !isPasswordValid() ->
-                _snackbarMessage.value = "잘못된 비밀번호 형식입니다."
+                !isPasswordValid() ->
+                    _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_password))
 
-            else -> {
-                _snackbarMessage.value = "회원가입 되었습니다."
-                navigateToLogIn(_signupState.value.email,_signupState.value.password)
+                else -> {
+                    _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
+                    navigateToLogIn(_signupState.value.email, _signupState.value.password)
+                }
             }
         }
     }
 
-    fun clearSnackbarMessage() {
-        _snackbarMessage.value = ""
-    }
 
     companion object {
         private const val PASSWORD_LENGTH_MIN = 8
@@ -90,7 +92,7 @@ class SignUpViewModel : ViewModel() {
     }
 }
 
-data class SignUpState(
+data class UserInfo(
     val email: String = "",
     val password: String = ""
 )

@@ -1,4 +1,4 @@
-package org.sopt.and.model
+package org.sopt.and.ui.navigation
 
 import kotlinx.serialization.Serializable
 

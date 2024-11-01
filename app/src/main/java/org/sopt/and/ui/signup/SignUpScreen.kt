@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,11 +43,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
+import org.sopt.and.ui.ShowSnackBar
 import org.sopt.and.ui.component.textfield.SignUpTextField
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+import org.sopt.and.ui.toast
 
 
 @Composable
@@ -56,6 +61,8 @@ fun SignUpScreen(
 ) {
     val viewModel = viewModel<SignUpViewModel>()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -64,14 +71,26 @@ fun SignUpScreen(
     val password = signUpState.value.password
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarMessage by viewModel.snackbarMessage
 
-    if (snackbarMessage.isNotEmpty()) {
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(snackbarMessage)
-            viewModel.clearSnackbarMessage()
-        }
+    LaunchedEffect(viewModel.signUpSideEffect, snackbarHostState, lifecycleOwner) {
+        viewModel.signUpSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is SignUpSideEffect.ShowToast -> {
+                        context.toast(sideEffect.message)
+                    }
+
+                    is SignUpSideEffect.ShowSnackBar -> {
+                        snackbarHostState.ShowSnackBar(
+                            coroutineScope,
+                            sideEffect.message,
+                            context
+                        )
+                    }
+                }
+            }
     }
+
 
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = { innerpadding ->

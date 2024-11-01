@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.sopt.and.R
-import org.sopt.and.model.Route
 
 
 sealed class BottomNavItem(
