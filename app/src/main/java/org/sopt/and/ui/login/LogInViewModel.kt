@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
-import org.sopt.and.ui.signup.UserInfo
 
 class LogInViewModel : ViewModel() {
-    private val _loginState = MutableStateFlow(UserInfo())
+    private val _loginState = MutableStateFlow(LogInState())
     val loginState = _loginState.asStateFlow()
 
     private val _signInSideEffect = MutableSharedFlow<SignInSideEffect>()
@@ -38,7 +37,11 @@ class LogInViewModel : ViewModel() {
         _loginState.value.email == email && _loginState.value.password == password
 
 
-    fun checkLoginData(email: String, password: String,navigateToHome: (String,String)-> Unit) {
+    fun checkLoginData(
+        email: String,
+        password: String,
+        navigateToMyPage: (logInState: LogInState) -> Unit
+    ) {
         viewModelScope.launch {
             when {
                 email.isBlank() ->
@@ -49,7 +52,7 @@ class LogInViewModel : ViewModel() {
 
                 else -> {
                     _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
-                    navigateToHome(email,password)
+                    navigateToMyPage(LogInState(email, password))
                 }
             }
         }

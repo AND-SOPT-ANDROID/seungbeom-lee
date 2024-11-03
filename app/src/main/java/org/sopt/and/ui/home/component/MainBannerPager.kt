@@ -52,7 +52,6 @@ fun MainBannerPager(bannerList: List<Int>) {
         modifier = Modifier
             .fillMaxWidth(),
         state = pagerState,
-        key = { bannerList[it] },
         contentPadding = PaddingValues(horizontal = screenWidth * 0.1f / 2),
         pageSpacing = 10.dp,
     ) { page ->

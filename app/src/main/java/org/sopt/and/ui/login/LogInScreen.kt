@@ -50,10 +50,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.sopt.and.R
 import org.sopt.and.ui.ShowSnackBar
-import org.sopt.and.ui.component.findActivity
 import org.sopt.and.ui.component.textfield.UserInfoTextField
+import org.sopt.and.ui.signup.SignUpState
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
-import org.sopt.and.ui.signup.UserInfo
 import org.sopt.and.ui.toast
 
 
@@ -61,19 +60,18 @@ import org.sopt.and.ui.toast
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: (String, String) -> Unit,
-    signUpState: UserInfo
+    navigateToMyPage: (logInState : LogInState) -> Unit,
+    signUpState: SignUpState
 ) {
     val viewModel = viewModel<LogInViewModel>()
 
     val context = LocalContext.current
-    val activity = context.findActivity()
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val loginState = viewModel.loginState.collectAsStateWithLifecycle()
-    val id = loginState.value.email
-    val password = loginState.value.password
+    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
+    val id = loginState.email
+    val password = loginState.password
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -92,7 +90,7 @@ fun LogInScreen(
                         snackBarHostState.ShowSnackBar(
                             coroutineScope,
                             sideEffect.message,
-                            activity
+                            context
                         )
                     }
                 }

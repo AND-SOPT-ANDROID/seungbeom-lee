@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -27,17 +28,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
+import org.sopt.and.ui.login.LogInState
 import org.sopt.and.ui.myprofile.component.BuyNowSection
 import org.sopt.and.ui.myprofile.component.LikeContentSection
 
 
 @Composable
-fun MyProfileScreen(email: String, password: String) {
+fun MyProfileScreen(logInState: LogInState) {
     val profileViewModel = viewModel<MyProfileViewModel>()
-    val profileState = profileViewModel.profileState.collectAsStateWithLifecycle()
-    val name = profileState.value.email
-    profileViewModel.setEmail(email)
-    profileViewModel.setPassword(password)
+    val profileState by profileViewModel.profileState.collectAsStateWithLifecycle()
+    val name = profileState.email
+    profileViewModel.setEmail(logInState.email)
+    profileViewModel.setPassword(logInState.password)
     Column(
         modifier = Modifier
             .fillMaxSize()

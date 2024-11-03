@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.sopt.and.R
 
 class SignUpViewModel : ViewModel() {
-    private val _signupState = MutableStateFlow(UserInfo())
+    private val _signupState = MutableStateFlow(SignUpState())
     val signupState = _signupState.asStateFlow()
 
     private val _signUpSideEffect = MutableSharedFlow<SignUpSideEffect>()
@@ -54,7 +54,7 @@ class SignUpViewModel : ViewModel() {
         return false
     }
 
-    fun dataCheck(navigateToLogIn : (id:String,password:String)-> Unit){
+    fun dataCheck(navigateToLogIn : (signUpState:SignUpState)-> Unit){
         viewModelScope.launch {
             when {
                 !isIdValid() ->
@@ -65,7 +65,7 @@ class SignUpViewModel : ViewModel() {
 
                 else -> {
                     _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
-                    navigateToLogIn(_signupState.value.email, _signupState.value.password)
+                    navigateToLogIn(SignUpState(_signupState.value.email, _signupState.value.password))
                 }
             }
         }
@@ -92,7 +92,3 @@ class SignUpViewModel : ViewModel() {
     }
 }
 
-data class UserInfo(
-    val email: String = "",
-    val password: String = ""
-)

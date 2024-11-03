@@ -1,5 +1,6 @@
 package org.sopt.and.ui.home.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +26,8 @@ fun ContentLazyList(imgList: List<Int>) {
         contentPadding = PaddingValues(end = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(imgList,
+        items(
+            imgList,
             key = { index -> index },
             contentType = { imgList -> imgList }) { img ->
             Content(img = img)
@@ -34,7 +36,9 @@ fun ContentLazyList(imgList: List<Int>) {
 }
 
 @Composable
-fun Content(img: Int) {
+fun Content(
+   @DrawableRes img: Int
+) {
     Box(
         modifier = Modifier
             .width(120.dp)

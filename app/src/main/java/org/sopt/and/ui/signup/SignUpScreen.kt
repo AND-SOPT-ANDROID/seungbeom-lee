@@ -56,7 +56,7 @@ import org.sopt.and.ui.toast
 
 @Composable
 fun SignUpScreen(
-    navigateToLogIn: (id: String, password: String) -> Unit,
+    navigateToLogIn: (signUpState:SignUpState) -> Unit,
     navigateToBack: () -> Unit
 ) {
     val viewModel = viewModel<SignUpViewModel>()
@@ -66,9 +66,7 @@ fun SignUpScreen(
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val signUpState = viewModel.signupState.collectAsStateWithLifecycle()
-    val id = signUpState.value.email
-    val password = signUpState.value.password
+    val signUpState by viewModel.signupState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -151,7 +149,7 @@ fun SignUpScreen(
                     Spacer(Modifier.padding(13.dp))
 
                     UserInfoTextField(
-                        textField = id,
+                        textField = signUpState.email,
                         onValueChange = viewModel::setEmail,
                         placeholder = stringResource(R.string.wavve_email),
                         isShown = true,
@@ -161,7 +159,7 @@ fun SignUpScreen(
                         infoText = stringResource(R.string.please_enter_correct_signup),
                     )
                     UserInfoTextField(
-                        textField = password,
+                        textField = signUpState.password,
                         onValueChange = viewModel::setPassword,
                         placeholder = stringResource(R.string.set_wavve_password_signup),
                         isShown = isPasswordVisible,
