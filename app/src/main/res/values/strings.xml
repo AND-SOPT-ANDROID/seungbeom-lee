@@ -38,5 +38,8 @@
     <string name="sign_up_not_valid_email">잘못된 이메일 형식입니다.</string>
     <string name="sign_up_not_valid_password">잘못된 비밀번호 형식입니다.</string>
     <string name="sign_up_signup_success">회원가입 되었습니다</string>
+    <string name="main_tab_home">홈</string>
+    <string name="main_tab_search">검색</string>
+    <string name="main_tab_my">My</string>
 
 </resources>

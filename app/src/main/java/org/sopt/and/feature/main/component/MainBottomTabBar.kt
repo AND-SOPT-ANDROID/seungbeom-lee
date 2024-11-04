@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.and.R
@@ -31,15 +32,15 @@ fun MainBottomTabsBar(
                 onClick = { onTabClicked(tab) },
                 icon = {
                     Icon(
-                        imageVector = tab.iconResId,
-                        contentDescription = tab.contentDescription,
+                        imageVector = tab.iconImageVector,
+                        contentDescription = stringResource(tab.contentDescription) ,
                         modifier = Modifier
                             .size(24.dp),
                     )
                 },
                 label = {
                     Text(
-                        text = tab.contentDescription,
+                        text = stringResource(tab.contentDescription),
                         color = Color.White,
                         fontSize = 10.sp,
                     )

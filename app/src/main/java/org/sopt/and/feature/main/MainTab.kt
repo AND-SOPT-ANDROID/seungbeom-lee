@@ -1,32 +1,34 @@
 package org.sopt.and.feature.main
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import org.sopt.and.R
 import org.sopt.and.core.navigation.MainTabRoute
 import org.sopt.and.core.navigation.Route
 
 enum class MainTab(
-    val iconResId: ImageVector,
-    val contentDescription: String,
+    val iconImageVector: ImageVector,
+    @StringRes val contentDescription: Int,
     val route: MainTabRoute
 ) {
     HOME(
-        iconResId = Icons.Default.Home,
-        contentDescription = "홈",
+        iconImageVector = Icons.Default.Home,
+        contentDescription = R.string.main_tab_home,
         route = MainTabRoute.Home
     ),
     SEARCH(
-        iconResId = Icons.Default.Search,
-        contentDescription = "검색",
+        iconImageVector = Icons.Default.Search,
+        contentDescription = R.string.main_tab_search,
         route = MainTabRoute.Search
     ),
     MY(
-        iconResId = Icons.Default.AccountCircle,
-        contentDescription = "My",
+        iconImageVector = Icons.Default.AccountCircle,
+        contentDescription = R.string.main_tab_my,
         route = MainTabRoute.MyProFile("","")
     );
 

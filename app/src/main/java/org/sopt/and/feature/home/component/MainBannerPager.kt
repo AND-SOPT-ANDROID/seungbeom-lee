@@ -38,7 +38,6 @@ fun MainBannerPager(bannerList: List<Int>) {
     )
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-
     LaunchedEffect(true) {
         while (true) {
             delay(2000)
