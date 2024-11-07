@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.sopt.and.data.dataremote.repository.UserServiceRepository
-import org.sopt.and.data.dataremote.repositoryimpl.UserServiceRepositoryImpl
+import org.sopt.and.domain.repository.UserServiceRepository
+import org.sopt.and.data.repositoryimpl.UserServiceRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -13,5 +13,5 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindUserServiceRepository(userServiceRepositoryImpl: UserServiceRepositoryImpl):UserServiceRepository
+    abstract fun bindUserServiceRepository(userServiceRepositoryImpl: UserServiceRepositoryImpl): UserServiceRepository
 }
