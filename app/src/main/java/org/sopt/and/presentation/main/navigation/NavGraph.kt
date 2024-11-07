@@ -44,11 +44,15 @@ fun NavGraph(
         ) {
             signInNavGraph(
                 navigationToSignUp = { navigator.navigationToSignUp() },
-                navigationToMyPage = { logInState -> navigator.navigationToMyPage(logInState) }
+                navigationToMyPage = { userToken ->
+                    navigator.navigationToMyPage(
+                        userToken
+                    )
+                }
             )
 
             signUpNavGraph(
-                navigationToLogIn = { userInfo -> navigator.navigationToSignIn(userInfo) },
+                navigationToLogIn = { navigator.navigationToSignIn() },
                 navigationToBack = { navigator.naviagationToBack() }
             )
 

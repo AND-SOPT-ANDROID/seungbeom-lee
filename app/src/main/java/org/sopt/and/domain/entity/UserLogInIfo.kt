@@ -1,7 +1,7 @@
 package org.sopt.and.domain.entity
 
-data class UserLogInIfo(
-    val username : String = "",
+data class UserLogInInfo(
+    val userName : String = "",
     val password : String = "",
 )
 

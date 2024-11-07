@@ -9,22 +9,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import org.sopt.and.presentation.home.navigation.navigateToHome
-import org.sopt.and.domain.entity.LogInState
-import org.sopt.and.presentation.main.MainTab
-import org.sopt.and.presentation.myprofile.navigation.navigateToMy
 import org.sopt.and.core.navigation.MainTabRoute
 import org.sopt.and.core.navigation.Route
+import org.sopt.and.domain.entity.UserToken
+import org.sopt.and.presentation.home.navigation.navigateToHome
+import org.sopt.and.presentation.main.MainTab
+import org.sopt.and.presentation.myprofile.navigation.navigateToMy
 import org.sopt.and.presentation.search.navigation.navigateToSearch
-import org.sopt.and.domain.entity.SignUpState
 
 class MainNavigator(
     val navController: NavHostController,
 ) {
-    val startDestination = Route.LogIn(
-        email = "",
-        password = "",
-    )
+    val startDestination = Route.LogIn
 
     private val currentDestination: NavDestination?
         @Composable get() = navController
@@ -42,16 +38,17 @@ class MainNavigator(
 
     fun navigationToSignUp() = navController.navigate(Route.SignUp, navOptions)
 
-    fun navigationToMyPage(logInState: LogInState) = navController.navigate(MainTabRoute.MyProFile(logInState.email,logInState.password)) {
-        popUpTo(Route.LogIn("", "")) {
+    fun navigationToMyPage(userToken : UserToken) =
+        navController.navigate(MainTabRoute.MyProFile(userToken.token)) {
+        popUpTo(Route.LogIn) {
             inclusive = true
         }
     }
     fun naviagationToBack() = navController.popBackStack()
 
 
-    fun navigationToSignIn(signUpState: SignUpState) =
-        navController.navigate(Route.LogIn(signUpState.email, signUpState.password), navOptions)
+    fun navigationToSignIn() =
+        navController.navigate(Route.LogIn, navOptions)
 
     fun navigateMainTab(tab: MainTab) {
         val navOptions = navOptions {

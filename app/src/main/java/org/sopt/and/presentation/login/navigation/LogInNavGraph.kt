@@ -2,25 +2,20 @@ package org.sopt.and.presentation.login.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import org.sopt.and.presentation.login.LogInScreen
-import org.sopt.and.domain.entity.LogInState
 import org.sopt.and.core.navigation.Route
-import org.sopt.and.domain.entity.SignUpState
+import org.sopt.and.domain.entity.UserToken
+import org.sopt.and.presentation.login.LogInScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.signInNavGraph(
     navigationToSignUp: () -> Unit = {},
-    navigationToMyPage: (logInState: LogInState) -> Unit = { _-> }
+    navigationToMyPage: (userToken:UserToken) -> Unit = { _-> }
 ) {
-    composable<Route.LogIn> { backStackEntry ->
-        val item = backStackEntry.toRoute<Route.LogIn>()
-        val signUpState = SignUpState(item.email, item.password)
+    composable<Route.LogIn> {
         LogInScreen(
             navigateToSignUp = navigationToSignUp,
             navigateToMyPage = navigationToMyPage,
-            signUpState = signUpState
         )
     }
 }

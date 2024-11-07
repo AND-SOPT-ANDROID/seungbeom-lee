@@ -45,32 +45,30 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.sopt.and.R
 import org.sopt.and.core.designsystem.component.textfield.UserInfoTextField
 import org.sopt.and.core.extension.showsnackBar
 import org.sopt.and.core.extension.toast
-import org.sopt.and.domain.entity.LogInState
-import org.sopt.and.domain.entity.SignUpState
+import org.sopt.and.domain.entity.UserToken
 import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @ExperimentalPermissionsApi
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: (logInState: LogInState) -> Unit,
-    signUpState: SignUpState
+    navigateToMyPage: (userToken:UserToken) -> Unit
 ) {
-    val viewModel = viewModel<LogInViewModel>()
+    val viewModel :LogInViewModel = hiltViewModel()
 
     val context = LocalContext.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-    val id = loginState.email
+    val id = loginState.userName
     val password = loginState.password
 
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -132,7 +130,7 @@ fun LogInScreen(
 
             UserInfoTextField(
                 textField = id,
-                onValueChange = viewModel::setEmail,
+                onValueChange = viewModel::setUserName,
                 placeholder = stringResource(R.string.logintextfield_placeholder),
                 isShown = true,
                 keyboardOptions = KeyboardOptions(
@@ -179,9 +177,7 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        viewModel.checkLoginData(
-                            signUpState.email, signUpState.password, navigateToMyPage
-                        )
+                        viewModel.checkLoginData(navigateToMyPage)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -254,10 +250,6 @@ fun LogInScreen(
                     fontSize = 14.sp,
                     color = colorResource(R.color.gray_63),
                     modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    text = signUpState.email,
-                    fontSize = 30.sp
                 )
             }
         }

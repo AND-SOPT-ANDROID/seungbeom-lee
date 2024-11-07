@@ -28,18 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.domain.entity.LogInState
 import org.sopt.and.presentation.myprofile.component.BuyNowSection
 import org.sopt.and.presentation.myprofile.component.LikeContentSection
 
 
 @Composable
-fun MyProfileScreen(logInState: LogInState) {
+fun MyProfileScreen(userToken :String) {
     val profileViewModel = viewModel<MyProfileViewModel>()
     val profileState by profileViewModel.profileState.collectAsStateWithLifecycle()
-    val name = profileState.email
-    profileViewModel.setEmail(logInState.email)
-    profileViewModel.setPassword(logInState.password)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,20 +56,25 @@ fun MyProfileScreen(logInState: LogInState) {
                         .size(70.dp)
                         .padding()
                 )
+
                 Text(
-                    text = name,
+                    text = "농구",
                     color = colorResource(R.color.white),
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .weight(1f)
                 )
+
                 Spacer(Modifier.padding(10.dp))
+
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = Icons.Default.Notifications.name,
                     tint = colorResource(R.color.white)
                 )
+
                 Spacer(Modifier.padding(10.dp))
+
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = Icons.Default.Settings.name,
@@ -91,7 +93,6 @@ fun MyProfileScreen(logInState: LogInState) {
                     .height(1.dp)
                     .background(colorResource(R.color.black))
             )
-
             BuyNowSection(stringResource(R.string.no_ticket_mypage))
         }
         LikeContentSection(text = stringResource(R.string.viewing_history_mypage)) {
@@ -108,7 +109,9 @@ fun MyProfileScreen(logInState: LogInState) {
                     modifier = Modifier.size(60.dp),
                     tint = colorResource(R.color.gray_a3)
                 )
+
                 Spacer(Modifier.padding(5.dp))
+
                 Text(
                     text = stringResource(R.string.no_viewing_histoory_mypage),
                     color = colorResource(R.color.gray_a3)
@@ -129,7 +132,9 @@ fun MyProfileScreen(logInState: LogInState) {
                     modifier = Modifier.size(60.dp),
                     tint = colorResource(R.color.gray_a3)
                 )
+
                 Spacer(Modifier.padding(5.dp))
+
                 Text(
                     text = stringResource(R.string.no_like_program_mypage),
                     color = colorResource(R.color.gray_a3)

@@ -1,7 +1,9 @@
 package org.sopt.and.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -9,19 +11,27 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
-import org.sopt.and.domain.entity.LogInState
+import org.sopt.and.data.dataremote.model.request.RequestSignInDto
+import org.sopt.and.domain.entity.UserLogInInfo
+import org.sopt.and.domain.entity.UserToken
+import org.sopt.and.domain.usecase.SignInUserUseCase
+import javax.inject.Inject
 
-class LogInViewModel : ViewModel() {
-    private val _loginState = MutableStateFlow(LogInState())
+@HiltViewModel
+class LogInViewModel @Inject constructor(
+    private val signInUserUseCase: SignInUserUseCase
+) : ViewModel() {
+    private val _loginState = MutableStateFlow(UserLogInInfo())
     val loginState = _loginState.asStateFlow()
 
     private val _signInSideEffect = MutableSharedFlow<SignInSideEffect>()
     val signInSideEffect get() = _signInSideEffect.asSharedFlow()
 
-    fun setEmail(email: String) {
+
+    fun setUserName(userName: String) {
         _loginState.update {
             it.copy(
-                email = email
+                userName = userName
             )
         }
     }
@@ -34,27 +44,30 @@ class LogInViewModel : ViewModel() {
         }
     }
 
+    private suspend fun signInUser(request: RequestSignInDto): Result<UserToken> =
+        signInUserUseCase(request)
+
+
     private fun isSignInAvailable(email: String, password: String): Boolean =
-        _loginState.value.email == email && _loginState.value.password == password
+        _loginState.value.userName == email && _loginState.value.password == password
 
 
     fun checkLoginData(
-        email: String,
-        password: String,
-        navigateToMyPage: (logInState: LogInState) -> Unit
+        navigateToMyPage: (userToken: UserToken) -> Unit
     ) {
         viewModelScope.launch {
-            when {
-                email.isBlank() ->
-                    _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.please_signup))
+            signInUser(
+                RequestSignInDto(
+                    _loginState.value.userName,
+                    _loginState.value.password
+                )
+            ).onFailure { exception ->
+                Log.d("ServerExeception", "등록 실패: ${exception.message}")
+                _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.check_id_password))
+            }.onSuccess { response ->
+                _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
+                navigateToMyPage(response)
 
-                !isSignInAvailable(email, password) ->
-                    _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.check_id_password))
-
-                else -> {
-                    _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
-                    navigateToMyPage(LogInState(email, password))
-                }
             }
         }
     }

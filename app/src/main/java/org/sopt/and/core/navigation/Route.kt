@@ -7,8 +7,5 @@ sealed interface Route {
     data object SignUp
 
     @Serializable
-    data class LogIn(
-        val email: String,
-        val password: String
-    )
+    data object LogIn
 }

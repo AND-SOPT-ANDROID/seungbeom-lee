@@ -1,12 +1,12 @@
 package org.sopt.and.core.navigation
 
 import kotlinx.serialization.Serializable
+import org.sopt.and.domain.entity.UserToken
 
 sealed interface MainTabRoute : Route {
     @Serializable
     data class MyProFile(
-        val email: String,
-        val password: String
+        val userToken: String
     ) : MainTabRoute
 
     @Serializable

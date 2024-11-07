@@ -41,5 +41,7 @@
     <string name="main_tab_home">홈</string>
     <string name="main_tab_search">검색</string>
     <string name="main_tab_my">My</string>
+    <string name="sign_up_not_valid_hobby">취미를 8자보다 적게 입력해주세요</string>
+    <string name="sign_up_hobby_basketball">농구</string>
 
 </resources>

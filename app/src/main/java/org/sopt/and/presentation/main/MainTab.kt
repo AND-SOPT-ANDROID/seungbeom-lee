@@ -29,7 +29,7 @@ enum class MainTab(
     MY(
         iconImageVector = Icons.Default.AccountCircle,
         contentDescription = R.string.main_tab_my,
-        route = MainTabRoute.MyProFile("","")
+        route = MainTabRoute.MyProFile("")
     );
 
     companion object {
