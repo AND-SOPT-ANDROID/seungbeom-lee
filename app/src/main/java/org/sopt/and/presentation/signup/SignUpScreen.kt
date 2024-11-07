@@ -42,24 +42,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
 import org.sopt.and.core.designsystem.component.textfield.UserInfoTextField
 import org.sopt.and.core.extension.showsnackBar
 import org.sopt.and.core.extension.toast
-import org.sopt.and.domain.entity.SignUpState
 import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 
 
 @Composable
 fun SignUpScreen(
-    navigateToLogIn: (signUpState: SignUpState) -> Unit,
+    navigateToLogIn: () -> Unit,
     navigateToBack: () -> Unit
 ) {
-    val viewModel = viewModel<SignUpViewModel>()
+    val viewModel :SignUpViewModel = hiltViewModel()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -147,8 +146,8 @@ fun SignUpScreen(
                     Spacer(Modifier.padding(13.dp))
 
                     UserInfoTextField(
-                        textField = signUpState.email,
-                        onValueChange = viewModel::setEmail,
+                        textField = signUpState.username,
+                        onValueChange = viewModel::setUserName,
                         placeholder = stringResource(R.string.wavve_email),
                         isShown = true,
                         keyboardOptions = KeyboardOptions(
@@ -156,6 +155,7 @@ fun SignUpScreen(
                         ),
                         infoText = stringResource(R.string.please_enter_correct_signup),
                     )
+
                     UserInfoTextField(
                         textField = signUpState.password,
                         onValueChange = viewModel::setPassword,
@@ -188,6 +188,19 @@ fun SignUpScreen(
 
                         ) {
                     }
+
+                    UserInfoTextField(
+                        textField = signUpState.hobby,
+                        onValueChange = viewModel::setHobby,
+                        placeholder = stringResource(R.string.sign_up_hobby_basketball),
+                        isShown = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                        ),
+                        infoText = stringResource(R.string.please_enter_correct_signup),
+                    )
+
+
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Spacer(
