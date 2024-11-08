@@ -38,12 +38,13 @@ class MainNavigator(
 
     fun navigationToSignUp() = navController.navigate(Route.SignUp, navOptions)
 
-    fun navigationToMyPage(userToken : UserToken) =
-        navController.navigate(MainTabRoute.MyProFile(userToken.token)) {
-        popUpTo(Route.LogIn) {
-            inclusive = true
+    fun navigationToMyPage() =
+        navController.navigate(MainTabRoute.MyProFile) {
+            popUpTo(Route.LogIn) {
+                inclusive = true
+            }
         }
-    }
+
     fun naviagationToBack() = navController.popBackStack()
 
 

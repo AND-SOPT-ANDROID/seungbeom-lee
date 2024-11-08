@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.sopt.and.domain.repository.UserServiceRepository
 import org.sopt.and.data.repositoryimpl.UserServiceRepositoryImpl
+import org.sopt.and.domain.repository.UserServiceRepository
 import javax.inject.Singleton
 
 @Module

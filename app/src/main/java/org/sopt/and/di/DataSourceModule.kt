@@ -6,7 +6,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.sopt.and.data.dataremote.datasouceimpl.UserServiceRemoteDataSourceImpl
 import org.sopt.and.data.dataremote.datasource.UserServiceRemoteDataSource
-import org.sopt.and.data.repositoryimpl.UserServiceRepositoryImpl
 import javax.inject.Singleton
 
 @Module

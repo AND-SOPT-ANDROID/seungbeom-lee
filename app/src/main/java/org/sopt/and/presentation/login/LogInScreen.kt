@@ -59,7 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: (userToken:UserToken) -> Unit
+    navigateToMyPage: () -> Unit
 ) {
     val viewModel :LogInViewModel = hiltViewModel()
 

@@ -10,7 +10,7 @@ import org.sopt.and.presentation.login.LogInScreen
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.signInNavGraph(
     navigationToSignUp: () -> Unit = {},
-    navigationToMyPage: (userToken:UserToken) -> Unit = { _-> }
+    navigationToMyPage: () -> Unit = {}
 ) {
     composable<Route.LogIn> {
         LogInScreen(

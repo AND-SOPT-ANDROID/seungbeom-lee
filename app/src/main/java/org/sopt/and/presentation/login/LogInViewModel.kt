@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
+import org.sopt.and.data.datalocal.repository.DataStoreRepository
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
 import org.sopt.and.domain.entity.UserLogInInfo
 import org.sopt.and.domain.entity.UserToken
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor(
-    private val signInUserUseCase: SignInUserUseCase
+    private val signInUserUseCase: SignInUserUseCase,
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
     private val _loginState = MutableStateFlow(UserLogInInfo())
     val loginState = _loginState.asStateFlow()
@@ -47,13 +49,11 @@ class LogInViewModel @Inject constructor(
     private suspend fun signInUser(request: RequestSignInDto): Result<UserToken> =
         signInUserUseCase(request)
 
-
-    private fun isSignInAvailable(email: String, password: String): Boolean =
-        _loginState.value.userName == email && _loginState.value.password == password
-
-
+    private suspend fun setToken(token: String){
+        dataStoreRepository.setToken(token)
+    }
     fun checkLoginData(
-        navigateToMyPage: (userToken: UserToken) -> Unit
+        navigateToMyPage: () -> Unit
     ) {
         viewModelScope.launch {
             signInUser(
@@ -66,8 +66,8 @@ class LogInViewModel @Inject constructor(
                 _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.check_id_password))
             }.onSuccess { response ->
                 _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
-                navigateToMyPage(response)
-
+                setToken(response.token)
+                navigateToMyPage()
             }
         }
     }

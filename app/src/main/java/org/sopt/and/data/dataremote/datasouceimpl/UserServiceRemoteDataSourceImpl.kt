@@ -3,6 +3,7 @@ package org.sopt.and.data.dataremote.datasouceimpl
 import org.sopt.and.data.dataremote.datasource.UserServiceRemoteDataSource
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
 import org.sopt.and.data.dataremote.model.request.RequestUserInfoRegisterDto
+import org.sopt.and.data.dataremote.model.response.ResponseGetMyHobbyDto
 import org.sopt.and.data.dataremote.model.response.ResponseSignInSuccessDto
 import org.sopt.and.data.dataremote.model.response.ResponseUserInfoRegisterSuccessDto
 import org.sopt.and.data.dataremote.service.AuthService
@@ -17,5 +18,9 @@ class UserServiceRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun userSignIn(requsetSignInDto: RequestSignInDto): ResponseSignInSuccessDto {
         return authService.userSignIn(requsetSignInDto)
+    }
+
+    override suspend fun getMyHobby(token: String): ResponseGetMyHobbyDto {
+        return authService.getMyHobby(token)
     }
 }

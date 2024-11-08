@@ -25,16 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
 import org.sopt.and.presentation.myprofile.component.BuyNowSection
 import org.sopt.and.presentation.myprofile.component.LikeContentSection
 
 
 @Composable
-fun MyProfileScreen(userToken :String) {
-    val profileViewModel = viewModel<MyProfileViewModel>()
+fun MyProfileScreen() {
+    val profileViewModel: MyProfileViewModel = hiltViewModel()
     val profileState by profileViewModel.profileState.collectAsStateWithLifecycle()
 
     Column(
@@ -58,7 +58,7 @@ fun MyProfileScreen(userToken :String) {
                 )
 
                 Text(
-                    text = "농구",
+                    text = profileState.hobby,
                     color = colorResource(R.color.white),
                     modifier = Modifier
                         .padding(start = 5.dp)

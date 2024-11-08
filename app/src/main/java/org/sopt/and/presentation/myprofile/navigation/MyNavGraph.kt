@@ -9,12 +9,10 @@ import org.sopt.and.core.navigation.MainTabRoute
 import org.sopt.and.presentation.myprofile.MyProfileScreen
 
 fun NavHostController.navigateToMy(navOptions: NavOptions) =
-    navigate(MainTabRoute.MyProFile(""), navOptions)
+    navigate(MainTabRoute.MyProFile, navOptions)
 
 fun NavGraphBuilder.myNavGraph() {
-    composable<MainTabRoute.MyProFile> {backStackEntry ->
-        val item = backStackEntry.toRoute<MainTabRoute.MyProFile>()
-        val userToken = item.userToken
-        MyProfileScreen(userToken)
+    composable<MainTabRoute.MyProFile> {
+        MyProfileScreen()
     }
 }

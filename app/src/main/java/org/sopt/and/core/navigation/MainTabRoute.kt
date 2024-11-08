@@ -5,9 +5,7 @@ import org.sopt.and.domain.entity.UserToken
 
 sealed interface MainTabRoute : Route {
     @Serializable
-    data class MyProFile(
-        val userToken: String
-    ) : MainTabRoute
+    data object MyProFile : MainTabRoute
 
     @Serializable
     data object Search : MainTabRoute

@@ -8,3 +8,4 @@ data class UserLogInInfo(
 data class UserToken(
    val token : String = ""
 )
+
