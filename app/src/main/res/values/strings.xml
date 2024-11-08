@@ -43,5 +43,6 @@
     <string name="main_tab_my">My</string>
     <string name="sign_up_not_valid_hobby">취미를 8자보다 적게 입력해주세요</string>
     <string name="sign_up_hobby_basketball">농구</string>
+    <string name="sign_up_please_enter_under_8_hobby">취미는 8자 이하로 입력해주세요</string>
 
 </resources>

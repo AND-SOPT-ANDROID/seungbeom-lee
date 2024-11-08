@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
-import org.sopt.and.data.datalocal.repository.DataStoreRepository
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
 import org.sopt.and.domain.entity.UserLogInInfo
 import org.sopt.and.domain.entity.UserToken
+import org.sopt.and.domain.usecase.DataStoreSetTokenUseCase
 import org.sopt.and.domain.usecase.SignInUserUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor(
     private val signInUserUseCase: SignInUserUseCase,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreSetTokenUseCase: DataStoreSetTokenUseCase
 ) : ViewModel() {
     private val _loginState = MutableStateFlow(UserLogInInfo())
     val loginState = _loginState.asStateFlow()
@@ -49,9 +49,10 @@ class LogInViewModel @Inject constructor(
     private suspend fun signInUser(request: RequestSignInDto): Result<UserToken> =
         signInUserUseCase(request)
 
-    private suspend fun setToken(token: String){
-        dataStoreRepository.setToken(token)
+    private suspend fun setToken(token: String) {
+        dataStoreSetTokenUseCase.invoke(token)
     }
+
     fun checkLoginData(
         navigateToMyPage: () -> Unit
     ) {

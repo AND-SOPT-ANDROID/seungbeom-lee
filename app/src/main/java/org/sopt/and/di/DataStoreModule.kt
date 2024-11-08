@@ -9,7 +9,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.sopt.and.data.datalocal.repository.DataStoreRepository
+import org.sopt.and.data.datalocal.repository.DataStoreRepositoryImpl
+import org.sopt.and.domain.repository.DataStoreRepository
 import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pref_data")
@@ -21,11 +22,5 @@ object DataModule {
     @Provides
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return context.dataStore
-    }
-
-    @Singleton
-    @Provides
-    fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepository {
-        return DataStoreRepository(dataStore)
     }
 }

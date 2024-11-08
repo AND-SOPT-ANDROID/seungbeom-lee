@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.sopt.and.data.datalocal.repository.DataStoreRepository
 import org.sopt.and.domain.entity.UserHobby
 import org.sopt.and.domain.entity.UserToken
+import org.sopt.and.domain.usecase.DataStoreGetTokenUseCase
 import org.sopt.and.domain.usecase.GetUserHobbyUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyProfileViewModel @Inject constructor(
     private val getUserHobbyUseCase: GetUserHobbyUseCase,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreGetTokenUseCase: DataStoreGetTokenUseCase
 ) : ViewModel() {
     private val _profileStatus = MutableStateFlow(ProfileState())
     val profileState = _profileStatus.asStateFlow()
@@ -51,7 +51,7 @@ class MyProfileViewModel @Inject constructor(
         getUserHobbyUseCase.invoke(token)
 
 
-    private suspend fun getToken(): Flow<String> = dataStoreRepository.getToken()
+    private suspend fun getToken(): Flow<String> = dataStoreGetTokenUseCase.invoke()
 
 }
 

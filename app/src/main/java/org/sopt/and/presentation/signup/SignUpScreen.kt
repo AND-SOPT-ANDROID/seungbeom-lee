@@ -58,7 +58,7 @@ fun SignUpScreen(
     navigateToLogIn: () -> Unit,
     navigateToBack: () -> Unit
 ) {
-    val viewModel :SignUpViewModel = hiltViewModel()
+    val viewModel: SignUpViewModel = hiltViewModel()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -197,10 +197,8 @@ fun SignUpScreen(
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
                         ),
-                        infoText = stringResource(R.string.please_enter_correct_signup),
+                        infoText = stringResource(R.string.sign_up_please_enter_under_8_hobby),
                     )
-
-
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Spacer(
