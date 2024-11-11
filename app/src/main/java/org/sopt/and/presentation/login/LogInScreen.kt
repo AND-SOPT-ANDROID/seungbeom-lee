@@ -58,7 +58,7 @@ import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_I
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: () -> Unit
+    navigateToHome: () -> Unit
 ) {
     val viewModel: LogInViewModel = hiltViewModel()
 
@@ -87,6 +87,14 @@ fun LogInScreen(
                             sideEffect.message,
                             context
                         )
+                    }
+
+                    is SignInSideEffect.NavigateToSignUp -> {
+                        navigateToSignUp()
+                    }
+
+                    is SignInSideEffect.NavigateToHome -> {
+                        navigateToHome()
                     }
                 }
             }
@@ -176,7 +184,7 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        viewModel.checkLoginData(navigateToMyPage)
+                        viewModel.checkLoginData()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -192,7 +200,7 @@ fun LogInScreen(
                 }
                 TextButton(
                     onClick = {
-                        navigateToSignUp()
+                        viewModel.navigateToSignUp()
                     }
                 ) {
                     Text(

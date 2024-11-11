@@ -53,8 +53,19 @@ class LogInViewModel @Inject constructor(
         dataStoreSetTokenUseCase.invoke(token)
     }
 
+    private fun navigateToHome(){
+        viewModelScope.launch {
+            _signInSideEffect.emit(SignInSideEffect.NavigateToHome)
+        }
+    }
+     fun navigateToSignUp(){
+        viewModelScope.launch {
+            _signInSideEffect.emit(SignInSideEffect.NavigateToSignUp)
+        }
+    }
+
     fun checkLoginData(
-        navigateToMyPage: () -> Unit
+
     ) {
         viewModelScope.launch {
             signInUser(
@@ -68,7 +79,7 @@ class LogInViewModel @Inject constructor(
             }.onSuccess { response ->
                 _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
                 setToken(response.token)
-                navigateToMyPage()
+                navigateToHome()
             }
         }
     }

@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import org.sopt.and.core.navigation.MainTabRoute
 import org.sopt.and.core.navigation.Route
 import org.sopt.and.presentation.home.navigation.navigateToHome
 import org.sopt.and.presentation.login.navigation.navigateToLogIn
@@ -40,8 +39,8 @@ class MainNavigator(
     fun navigationToSignUp() =
         navController.navigateToSignUp(navOptions)
 
-    fun navigationToMyPage() =
-        navController.navigateToMy(navOptions {
+    fun navigationToHome() =
+        navController.navigateToHome(navOptions {
             popUpTo(Route.LogIn) {
                 inclusive = true
             }

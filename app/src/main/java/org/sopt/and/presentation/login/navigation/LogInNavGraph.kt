@@ -15,12 +15,12 @@ fun NavHostController.navigateToLogIn(navOptions: NavOptions) {
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.signInNavGraph(
     navigationToSignUp: () -> Unit = {},
-    navigationToMyPage: () -> Unit = {}
+    navigationToHome: () -> Unit = {}
 ) {
     composable<Route.LogIn> {
         LogInScreen(
             navigateToSignUp = navigationToSignUp,
-            navigateToMyPage = navigationToMyPage,
+            navigateToHome = navigationToHome,
         )
     }
 }

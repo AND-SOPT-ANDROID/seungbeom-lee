@@ -68,7 +68,7 @@ fun SignUpScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(viewModel.signUpSideEffect, snackbarHostState, lifecycleOwner) {
+    LaunchedEffect(viewModel.signUpSideEffect, lifecycleOwner) {
         viewModel.signUpSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
@@ -82,10 +82,16 @@ fun SignUpScreen(
                             context
                         )
                     }
+                    is SignUpSideEffect.NavigateToLogIn -> {
+                        navigateToLogIn()
+                    }
+
+                    is SignUpSideEffect.NaviagateToBack -> {
+                        navigateToBack()
+                    }
                 }
             }
     }
-
 
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = { innerpadding ->
@@ -121,7 +127,7 @@ fun SignUpScreen(
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable {
-                                    navigateToBack()
+                                    viewModel.navigateToBack()
                                 },
                             tint = colorResource(R.color.exit)
                         )
@@ -258,7 +264,7 @@ fun SignUpScreen(
                         .background(color = colorResource(R.color.signup_button_gray))
                         .alpha(0.7f)
                         .clickable {
-                            viewModel.dataCheck(navigateToLogIn = navigateToLogIn)
+                            viewModel.dataCheck()
                         }
                 ) {
                     Text(

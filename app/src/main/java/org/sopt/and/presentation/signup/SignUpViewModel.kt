@@ -57,7 +57,6 @@ class SignUpViewModel @Inject constructor(
     private suspend fun registerUser(request: RequestUserInfoRegisterDto):
             Result<ResponseUserInfoRegisterSuccessDto> = registerUserUseCase(request)
 
-
     private fun isUserNameValid(): Boolean =
         _signupState.value.username.length < USER_INFO_LENGTH_MAX
 
@@ -79,8 +78,19 @@ class SignUpViewModel @Inject constructor(
         return false
     }
 
+    private fun navigateToLogin(){
+        viewModelScope.launch {
+            _signUpSideEffect.emit(SignUpSideEffect.NavigateToLogIn)
+        }
+    }
 
-    fun dataCheck(navigateToLogIn: () -> Unit) {
+    fun navigateToBack(){
+        viewModelScope.launch {
+            _signUpSideEffect.emit(SignUpSideEffect.NaviagateToBack)
+        }
+    }
+
+    fun dataCheck() {
         viewModelScope.launch {
             when {
                 !isUserNameValid() ->
@@ -103,13 +113,12 @@ class SignUpViewModel @Inject constructor(
                         Log.d("ServerExeception", "등록 실패: ${exception.message}")
                     }.onSuccess {
                         _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
-                        navigateToLogIn()
+                        navigateToLogin()
                     }
                 }
             }
         }
     }
-
 
     companion object {
         private const val USER_INFO_LENGTH_MAX = 8
