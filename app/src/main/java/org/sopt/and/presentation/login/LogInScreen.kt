@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -50,9 +51,7 @@ import org.sopt.and.R
 import org.sopt.and.core.designsystem.component.textfield.UserInfoTextField
 import org.sopt.and.core.extension.showsnackBar
 import org.sopt.and.core.extension.toast
-import org.sopt.and.domain.entity.UserToken
 import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
-import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @ExperimentalPermissionsApi
@@ -61,7 +60,7 @@ fun LogInScreen(
     navigateToSignUp: () -> Unit,
     navigateToMyPage: () -> Unit
 ) {
-    val viewModel :LogInViewModel = hiltViewModel()
+    val viewModel: LogInViewModel = hiltViewModel()
 
     val context = LocalContext.current
 
@@ -75,7 +74,7 @@ fun LogInScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(viewModel.signInSideEffect, snackBarHostState, lifecycleOwner) {
+    LaunchedEffect(viewModel.signInSideEffect, lifecycleOwner) {
         viewModel.signInSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {

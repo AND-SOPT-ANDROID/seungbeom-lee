@@ -24,12 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.and.R
 import org.sopt.and.presentation.myprofile.component.BuyNowSection
-import org.sopt.and.presentation.myprofile.component.LikeContentSection
 
 
 @Composable
@@ -95,7 +96,17 @@ fun MyProfileScreen() {
             )
             BuyNowSection(stringResource(R.string.no_ticket_mypage))
         }
-        LikeContentSection(text = stringResource(R.string.viewing_history_mypage)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.viewing_history_mypage),
+                color = colorResource(R.color.white),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +129,17 @@ fun MyProfileScreen() {
                 )
             }
         }
-        LikeContentSection(stringResource(R.string.like_program_mypage)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(15.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.like_program_mypage),
+                color = colorResource(R.color.white),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,

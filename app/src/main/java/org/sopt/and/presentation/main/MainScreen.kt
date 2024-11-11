@@ -7,12 +7,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.sopt.and.presentation.main.navigation.rememberMainNavigator
 import org.sopt.and.presentation.main.component.MainBottomTabsBar
+import org.sopt.and.presentation.main.navigation.MainNavigator
 import org.sopt.and.presentation.main.navigation.NavGraph
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    val navigator = rememberMainNavigator()
-
+fun MainScreen(navigator: MainNavigator = rememberMainNavigator()) {
     Scaffold(
         bottomBar = {
             if (navigator.shouldShowBottomBar()) {

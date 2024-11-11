@@ -1,6 +1,5 @@
 package org.sopt.and.presentation.home.component
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,12 +37,11 @@ fun MainBannerPager(bannerList: List<Int>) {
     )
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         while (true) {
             delay(2000)
             if (!pagerState.isScrollInProgress) {
                 val nextPage = (pagerState.currentPage + 1) % (totalPageNum)
-                Log.d("Zz", "${pagerState.currentPage}")
                 pagerState.animateScrollToPage(nextPage)
             }
         }
@@ -86,7 +84,7 @@ fun Banner(bannerImg: Int, index: Int, totalSize: Int) {
         ) {
             Row {
                 Text(
-                    text = "${index + 1} / ",
+                    text = "${index + 1 % totalSize} / ",
                     color = Color.White,
                     fontSize = 12.sp,
                 )

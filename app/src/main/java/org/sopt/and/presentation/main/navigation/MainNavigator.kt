@@ -11,11 +11,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import org.sopt.and.core.navigation.MainTabRoute
 import org.sopt.and.core.navigation.Route
-import org.sopt.and.domain.entity.UserToken
 import org.sopt.and.presentation.home.navigation.navigateToHome
+import org.sopt.and.presentation.login.navigation.navigateToLogIn
 import org.sopt.and.presentation.main.MainTab
 import org.sopt.and.presentation.myprofile.navigation.navigateToMy
 import org.sopt.and.presentation.search.navigation.navigateToSearch
+import org.sopt.and.presentation.signup.navigation.navigateToSignUp
 
 class MainNavigator(
     val navController: NavHostController,
@@ -36,20 +37,22 @@ class MainNavigator(
         launchSingleTop = true
     }
 
-    fun navigationToSignUp() = navController.navigate(Route.SignUp, navOptions)
+    fun navigationToSignUp() =
+        navController.navigateToSignUp(navOptions)
 
     fun navigationToMyPage() =
-        navController.navigate(MainTabRoute.MyProFile) {
+        navController.navigateToMy(navOptions {
             popUpTo(Route.LogIn) {
                 inclusive = true
             }
-        }
+        })
 
-    fun naviagationToBack() = navController.popBackStack()
+    fun naviagationToBack() =
+        navController.popBackStack()
 
 
-    fun navigationToSignIn() =
-        navController.navigate(Route.LogIn, navOptions)
+    fun navigationToLogIn() =
+        navController.navigateToLogIn(navOptions)
 
     fun navigateMainTab(tab: MainTab) {
         val navOptions = navOptions {

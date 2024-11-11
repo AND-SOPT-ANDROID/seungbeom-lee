@@ -48,7 +48,7 @@ fun NavGraph(
             )
 
             signUpNavGraph(
-                navigationToLogIn = { navigator.navigationToSignIn() },
+                navigationToLogIn = { navigator.navigationToLogIn() },
                 navigationToBack = { navigator.naviagationToBack() }
             )
 

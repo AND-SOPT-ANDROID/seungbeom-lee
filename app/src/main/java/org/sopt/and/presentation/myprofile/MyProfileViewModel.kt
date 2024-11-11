@@ -26,7 +26,6 @@ class MyProfileViewModel @Inject constructor(
 
     private var _token = MutableStateFlow(UserToken())
 
-
     init {
         viewModelScope.launch {
             val savedToken = getToken().first()
@@ -42,14 +41,11 @@ class MyProfileViewModel @Inject constructor(
                     )
                 }
             }
-
-
         }
     }
 
     private suspend fun getUserHobby(token: String): Result<UserHobby> =
         getUserHobbyUseCase.invoke(token)
-
 
     private suspend fun getToken(): Flow<String> = dataStoreGetTokenUseCase.invoke()
 

@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModel
 import org.sopt.and.R
 
 class HomeViewModel : ViewModel() {
-    private val genreTextList = listOf(
+    private fun getGenreTextList() = listOf(
         "뉴클래식", "드라마", "예능", "영화", "애니", "해외시리즈"
     )
-    private val mainBannerImage = listOf(
+
+    private fun getMainBannerImage() = listOf(
         R.drawable.img_banner_1,
         R.drawable.img_banner_3,
         R.drawable.img_banner_4,
@@ -16,7 +17,8 @@ class HomeViewModel : ViewModel() {
         R.drawable.img_banner_6,
         R.drawable.img_banner_7
     )
-    private val editorRecommendList = listOf(
+
+    private fun getEditorRecommendList() = listOf(
         R.drawable.img_editor_recommed_1,
         R.drawable.img_editor_recommed_2,
         R.drawable.img_editor_recommed_3,
@@ -24,7 +26,8 @@ class HomeViewModel : ViewModel() {
         R.drawable.img_editor_recommed_5,
         R.drawable.img_editor_recommed_6
     )
-    private val top20List = listOf(
+
+    private fun getTop20List() = listOf(
         R.drawable.img_top20_1,
         R.drawable.img_top20_2,
         R.drawable.img_top20_3,
@@ -35,12 +38,17 @@ class HomeViewModel : ViewModel() {
         R.drawable.img_top20_8,
         R.drawable.img_top20_9,
         R.drawable.img_top20_10,
-
-
-        )
+    )
 
     private val _uiState =
-        mutableStateOf(UIState(genreTextList, mainBannerImage, editorRecommendList, top20List))
+        mutableStateOf(
+            UIState(
+                getGenreTextList(),
+                getMainBannerImage(),
+                getEditorRecommendList(),
+                getTop20List()
+            )
+        )
     val uiState = _uiState
 
 }

@@ -1,4 +1,4 @@
-package org.sopt.and.data.datalocal.repository
+package org.sopt.and.data.repositoryimpl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

@@ -80,12 +80,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 tint = colorResource(R.color.white)
             )
         }
+
         Spacer(Modifier.height(30.dp))
+
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            items(uiState.value.genreList){ genre ->
+            items(uiState.value.genreList) { genre ->
                 Text(
                     text = genre,
                     color = colorResource(R.color.gray_a3),
@@ -93,6 +95,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 )
             }
         }
+
         Spacer(Modifier.height(20.dp))
 
         MainBannerPager(uiState.value.mainBannerList)
