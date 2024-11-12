@@ -32,12 +32,10 @@ class MainNavigator(
             currentDestination?.hasRoute(tab::class) == true
         }
 
-    private val navOptions = navOptions {
-        launchSingleTop = true
-    }
-
     fun navigationToSignUp() =
-        navController.navigateToSignUp(navOptions)
+        navController.navigateToSignUp(navOptions {
+            launchSingleTop = true
+        })
 
     fun navigationToHome() =
         navController.navigateToHome(navOptions {
@@ -51,14 +49,20 @@ class MainNavigator(
 
 
     fun navigationToLogIn() =
-        navController.navigateToLogIn(navOptions)
+        navController.navigateToLogIn(navOptions {
+            popUpTo(Route.SignUp) {
+                inclusive = true
+            }
+
+        })
 
     fun navigateMainTab(tab: MainTab) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = true
+                saveState = true
             }
             launchSingleTop = true
+            restoreState = true
         }
 
         when (tab) {

@@ -28,7 +28,7 @@ fun MainBottomTabsBar(
     ) {
         mainTabs.forEach { tab ->
             NavigationBarItem(
-                selected = currentBottomTab == tab,
+                selected = tab == currentBottomTab,
                 onClick = { onTabClicked(tab) },
                 icon = {
                     Icon(
