@@ -17,6 +17,6 @@ fun SearchScreen(modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "여기는 Search Screen!", fontSize = 25.sp)
+
     }
 }

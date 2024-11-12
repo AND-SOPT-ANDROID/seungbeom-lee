@@ -154,28 +154,29 @@ fun LogInScreen(
                 isShown = isPasswordVisible,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
-                )
-            ) {
-                TextButton(
-                    onClick = {
-                        isPasswordVisible = !isPasswordVisible
-                    }) {
-                    if (isPasswordVisible) {
-                        Text(
-                            text = stringResource(R.string.hide),
-                            modifier = Modifier.padding(7.dp),
-                            color = Color.White
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.show),
-                            modifier = Modifier.padding(7.dp),
-                            color = Color.White
+                ),
+                trailingIcon = {
+                    TextButton(
+                        onClick = {
+                            isPasswordVisible = !isPasswordVisible
+                        }) {
+                        if (isPasswordVisible) {
+                            Text(
+                                text = stringResource(R.string.hide),
+                                modifier = Modifier.padding(7.dp),
+                                color = Color.White
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.show),
+                                modifier = Modifier.padding(7.dp),
+                                color = Color.White
 
-                        )
+                            )
+                        }
                     }
                 }
-            }
+            )
 
 
             Column(
