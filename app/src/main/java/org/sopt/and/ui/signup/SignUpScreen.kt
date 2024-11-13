@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,36 +43,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.sopt.and.R
-import org.sopt.and.ui.component.textfield.SignUpTextField
+import org.sopt.and.ui.ShowSnackBar
+import org.sopt.and.ui.component.textfield.UserInfoTextField
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+import org.sopt.and.ui.toast
 
 
 @Composable
 fun SignUpScreen(
-    navigateToLogIn: (id: String, password: String) -> Unit,
+    navigateToLogIn: (signUpState:SignUpState) -> Unit,
     navigateToBack: () -> Unit
 ) {
     val viewModel = viewModel<SignUpViewModel>()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val signUpState = viewModel.signupState.collectAsStateWithLifecycle()
-    val id = signUpState.value.email
-    val password = signUpState.value.password
+    val signUpState by viewModel.signupState.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarMessage by viewModel.snackbarMessage
 
-    if (snackbarMessage.isNotEmpty()) {
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(snackbarMessage)
-            viewModel.clearSnackbarMessage()
-        }
+    LaunchedEffect(viewModel.signUpSideEffect, snackbarHostState, lifecycleOwner) {
+        viewModel.signUpSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is SignUpSideEffect.ShowToast -> {
+                        context.toast(sideEffect.message)
+                    }
+
+                    is SignUpSideEffect.ShowSnackBar -> {
+                        snackbarHostState.ShowSnackBar(
+                            coroutineScope,
+                            sideEffect.message,
+                            context
+                        )
+                    }
+                }
+            }
     }
+
 
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         content = { innerpadding ->
@@ -131,44 +148,47 @@ fun SignUpScreen(
 
                     Spacer(Modifier.padding(13.dp))
 
-                    SignUpTextField(
-                        text = stringResource(R.string.please_enter_correct_signup),
-                        textField = id,
+                    UserInfoTextField(
+                        textField = signUpState.email,
                         onValueChange = viewModel::setEmail,
                         placeholder = stringResource(R.string.wavve_email),
                         isShown = true,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
-                        )
+                        ),
+                        infoText = stringResource(R.string.please_enter_correct_signup),
                     )
-                    SignUpTextField(
-                        text = stringResource(R.string.signup_password_check_regex),
-                        textField = password,
+                    UserInfoTextField(
+                        textField = signUpState.password,
                         onValueChange = viewModel::setPassword,
                         placeholder = stringResource(R.string.set_wavve_password_signup),
                         isShown = isPasswordVisible,
+                        trailingIcon = {
+                            TextButton(
+                                onClick = { isPasswordVisible = !isPasswordVisible },
+                                content = {
+                                    if (isPasswordVisible) {
+                                        Text(
+                                            text = stringResource(R.string.hide),
+                                            modifier = Modifier.padding(7.dp),
+                                            color = Color.White
+                                        )
+                                    } else {
+                                        Text(
+                                            text = stringResource(R.string.show),
+                                            modifier = Modifier.padding(7.dp),
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            )
+                        },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
-                        )
-                    ) {
-                        TextButton(
-                            onClick = { isPasswordVisible = !isPasswordVisible },
-                            content = {
-                                if (isPasswordVisible) {
-                                    Text(
-                                        text = stringResource(R.string.hide),
-                                        modifier = Modifier.padding(7.dp),
-                                        color = Color.White
-                                    )
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.show),
-                                        modifier = Modifier.padding(7.dp),
-                                        color = Color.White
-                                    )
-                                }
-                            }
-                        )
+                        ),
+                        infoText = stringResource(R.string.signup_password_check_regex),
+
+                        ) {
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {

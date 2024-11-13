@@ -1,17 +1,21 @@
 package org.sopt.and.ui.login
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.sopt.and.R
 
 class LogInViewModel : ViewModel() {
-    private val _loginState = MutableStateFlow(LoginState())
+    private val _loginState = MutableStateFlow(LogInState())
     val loginState = _loginState.asStateFlow()
 
-    fun initLoginState() {
-        _loginState.value = LoginState()
-    }
+    private val _signInSideEffect = MutableSharedFlow<SignInSideEffect>()
+    val signInSideEffect get() = _signInSideEffect.asSharedFlow()
 
     fun setEmail(email: String) {
         _loginState.update {
@@ -29,12 +33,28 @@ class LogInViewModel : ViewModel() {
         }
     }
 
-    fun checkLoginData(email: String, password: String): Boolean =
+    private fun isSignInAvailable(email: String, password: String): Boolean =
         _loginState.value.email == email && _loginState.value.password == password
 
-}
 
-data class LoginState(
-    val email: String = "",
-    val password: String = ""
-)
+    fun checkLoginData(
+        email: String,
+        password: String,
+        navigateToMyPage: (logInState: LogInState) -> Unit
+    ) {
+        viewModelScope.launch {
+            when {
+                email.isBlank() ->
+                    _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.please_signup))
+
+                !isSignInAvailable(email, password) ->
+                    _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.check_id_password))
+
+                else -> {
+                    _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
+                    navigateToMyPage(LogInState(email, password))
+                }
+            }
+        }
+    }
+}

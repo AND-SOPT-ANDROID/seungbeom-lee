@@ -1,4 +1,4 @@
-package org.sopt.and.ui.home
+package org.sopt.and.ui.home.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,30 +10,49 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import org.sopt.and.R
 
 @Composable
-fun MainBannerPager(bannerList: List<Int>, pagerState: PagerState) {
+fun MainBannerPager(bannerList: List<Int>) {
     val totalPageNum = bannerList.size
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { Int.MAX_VALUE },
+    )
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+
+    LaunchedEffect(true) {
+        while (true) {
+            delay(2000)
+            if (!pagerState.isScrollInProgress) {
+                val nextPage = pagerState.currentPage.plus(1)
+                pagerState.animateScrollToPage(nextPage)
+            }
+        }
+    }
+
     HorizontalPager(
         modifier = Modifier
             .fillMaxWidth(),
         state = pagerState,
-        key = { bannerList[it] },
-        contentPadding = PaddingValues(end = 20.dp),
+        contentPadding = PaddingValues(horizontal = screenWidth * 0.1f / 2),
         pageSpacing = 10.dp,
     ) { page ->
         val banner = bannerList[page]

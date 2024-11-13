@@ -1,7 +1,5 @@
 package org.sopt.and.ui.login
 
-import LogInTextField
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,13 +22,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,85 +43,60 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.launch
 import org.sopt.and.R
-import org.sopt.and.ui.component.findActivity
+import org.sopt.and.ui.ShowSnackBar
+import org.sopt.and.ui.component.textfield.UserInfoTextField
 import org.sopt.and.ui.signup.SignUpState
 import org.sopt.and.ui.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+import org.sopt.and.ui.toast
 
 
 @ExperimentalPermissionsApi
 @Composable
 fun LogInScreen(
     navigateToSignUp: () -> Unit,
-    navigateToMyPage: (String, String) -> Unit,
+    navigateToMyPage: (logInState : LogInState) -> Unit,
     signUpState: SignUpState
 ) {
     val viewModel = viewModel<LogInViewModel>()
 
     val context = LocalContext.current
-    val activity = context.findActivity()
 
-    val loginState = viewModel.loginState.collectAsStateWithLifecycle()
-    val id = loginState.value.email
-    val password = loginState.value.password
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
+    val id = loginState.email
+    val password = loginState.password
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    fun logInFalse() {
-        scope.launch {
-            val result = snackBarHostState
-                .showSnackbar(
-                    message = activity.getString(R.string.check_id_password),
-                    actionLabel = activity.getString(R.string.check),
-                    duration = SnackbarDuration.Short
-                )
-            when (result) {
-                SnackbarResult.ActionPerformed -> {
-                    Toast.makeText(
-                        activity,
-                        "id :${signUpState.email}\npassword :${signUpState.password}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+    LaunchedEffect(viewModel.signInSideEffect, snackBarHostState, lifecycleOwner) {
+        viewModel.signInSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is SignInSideEffect.ShowToast -> {
+                        context.toast(sideEffect.message)
+                    }
+
+                    is SignInSideEffect.ShowSnackBar -> {
+                        snackBarHostState.ShowSnackBar(
+                            coroutineScope,
+                            sideEffect.message,
+                            context
+                        )
+                    }
                 }
-
-                SnackbarResult.Dismissed -> Unit
             }
-        }
     }
 
-    fun logInSuccess() {
-        Toast.makeText(
-            activity,
-            context.getString(R.string.login_success_toast),
-            Toast.LENGTH_SHORT
-        ).show()
-        navigateToMyPage(id, password)
-    }
-
-    fun signUpCheck() {
-        scope.launch {
-            val result = snackBarHostState
-                .showSnackbar(
-                    message = context.getString(R.string.please_signup),
-                    actionLabel = context.getString(R.string.do_signup),
-                    duration = SnackbarDuration.Short
-                )
-            when (result) {
-                SnackbarResult.ActionPerformed -> {
-                    navigateToSignUp()
-                }
-
-                SnackbarResult.Dismissed -> Unit
-            }
-        }
-    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
@@ -160,7 +132,7 @@ fun LogInScreen(
             }
             Spacer(Modifier.padding(40.dp))
 
-            LogInTextField(
+            UserInfoTextField(
                 textField = id,
                 onValueChange = viewModel::setEmail,
                 placeholder = stringResource(R.string.logintextfield_placeholder),
@@ -172,7 +144,7 @@ fun LogInScreen(
 
             Spacer(Modifier.padding(5.dp))
 
-            LogInTextField(
+            UserInfoTextField(
                 textField = password,
                 onValueChange = viewModel::setPassword,
                 placeholder = stringResource(R.string.password),
@@ -209,19 +181,9 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        if (signUpState.email.isNotBlank()) {
-                            if (!viewModel.checkLoginData(
-                                    signUpState.email,
-                                    signUpState.password
-                                )
-                            ) {
-                                logInFalse()
-                            } else {
-                                logInSuccess()
-                            }
-                        } else {
-                            signUpCheck()
-                        }
+                        viewModel.checkLoginData(
+                            signUpState.email, signUpState.password, navigateToMyPage
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -294,6 +256,10 @@ fun LogInScreen(
                     fontSize = 14.sp,
                     color = colorResource(R.color.gray_63),
                     modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = signUpState.email,
+                    fontSize = 30.sp
                 )
             }
         }
