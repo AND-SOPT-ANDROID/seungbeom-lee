@@ -6,18 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseUserInfoRegisterSuccessDto(
-    @SerialName("result")
-    val result: Result
-)  {
-    @Serializable
-    data class Result(
-        @SerialName("no")
-        val no: Int
-    )
-}
-
-@Serializable
-data class ResponseUserInfoRegisterFailureDto(
-    @SerialName("code")
-    val code: String
+    @SerialName("no")
+    val no: Int
 )

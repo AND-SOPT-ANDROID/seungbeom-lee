@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,9 @@ fun MyProfileScreen() {
     val profileViewModel: MyProfileViewModel = hiltViewModel()
     val profileState by profileViewModel.profileState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        profileViewModel.setHobby()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

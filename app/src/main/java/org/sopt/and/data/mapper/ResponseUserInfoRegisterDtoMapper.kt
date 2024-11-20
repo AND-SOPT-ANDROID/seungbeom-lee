@@ -4,5 +4,5 @@ import org.sopt.and.data.dataremote.model.response.ResponseSignInSuccessDto
 import org.sopt.and.domain.entity.UserToken
 
 fun ResponseSignInSuccessDto.toDomain() : UserToken = UserToken(
-    token = this.result.token
+    token = this.token
 )

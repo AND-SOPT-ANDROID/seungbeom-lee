@@ -15,16 +15,16 @@ class UserServiceRepositoryImpl @Inject constructor(
 ) : UserServiceRepository {
     override suspend fun registerUserInfo(requestUserInfoRegisterDto: RequestUserInfoRegisterDto): Result<ResponseUserInfoRegisterSuccessDto> =
         runCatching {
-            userServiceRemoteDataSource.registerUserInfo(requestUserInfoRegisterDto)
+            userServiceRemoteDataSource.registerUserInfo(requestUserInfoRegisterDto).result
         }
 
     override suspend fun userSignIn(requsetSignInDto: RequestSignInDto): Result<UserToken> =
         runCatching {
-            userServiceRemoteDataSource.userSignIn(requsetSignInDto).toDomain()
+            userServiceRemoteDataSource.userSignIn(requsetSignInDto).result.toDomain()
         }
 
     override suspend fun getMyHobby(token: String): Result<UserHobby> =
         runCatching {
-            userServiceRemoteDataSource.getMyHobby(token).toDomain()
+            userServiceRemoteDataSource.getMyHobby(token).result.toDomain()
         }
 }

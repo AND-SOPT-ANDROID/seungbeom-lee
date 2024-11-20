@@ -1,5 +1,6 @@
 package org.sopt.and.data.dataremote.service
 
+import org.sopt.and.data.dataremote.model.BaseResponse
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
 import org.sopt.and.data.dataremote.model.request.RequestUserInfoRegisterDto
 import org.sopt.and.data.dataremote.model.response.ResponseGetMyHobbyDto
@@ -14,15 +15,15 @@ interface AuthService {
     @POST("/user")
     suspend fun registerUserInfo(
         @Body requestUserInfoRegisterDto: RequestUserInfoRegisterDto
-    ): ResponseUserInfoRegisterSuccessDto
+    ): BaseResponse<ResponseUserInfoRegisterSuccessDto>
 
     @POST("/login")
     suspend fun userSignIn(
         @Body requsetSignInDto: RequestSignInDto
-    ): ResponseSignInSuccessDto
+    ): BaseResponse<ResponseSignInSuccessDto>
 
     @GET("user/my-hobby")
     suspend fun getMyHobby(
         @Header("token") token: String
-    ) : ResponseGetMyHobbyDto
+    ): BaseResponse<ResponseGetMyHobbyDto>
 }

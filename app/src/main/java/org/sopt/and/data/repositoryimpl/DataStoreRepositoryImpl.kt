@@ -15,14 +15,12 @@ import javax.inject.Inject
 class DataStoreRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : DataStoreRepository {
-    private val tokenKey = stringPreferencesKey("token")
 
     override suspend fun setToken(token: String) {
         dataStore.edit {
-            it[tokenKey] = token
+            it[TOKEN_KEY] = token
         }
     }
-
 
     override suspend fun getToken(): Flow<String> {
         return dataStore.data.catch { e ->
@@ -32,7 +30,11 @@ class DataStoreRepositoryImpl @Inject constructor(
                 throw e
             }
         }.map {
-            it[tokenKey] ?: "tokenNull"
+            it[TOKEN_KEY] ?: "tokenNull"
         }
+    }
+
+    companion object {
+        private val TOKEN_KEY = stringPreferencesKey("token")
     }
 }

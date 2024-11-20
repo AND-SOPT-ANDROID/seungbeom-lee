@@ -1,6 +1,5 @@
 package org.sopt.and.presentation.signup
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.lifecycle.ViewModel
@@ -78,13 +77,13 @@ class SignUpViewModel @Inject constructor(
         return false
     }
 
-    private fun navigateToLogin(){
+    private fun navigateToLogin() {
         viewModelScope.launch {
             _signUpSideEffect.emit(SignUpSideEffect.NavigateToLogIn)
         }
     }
 
-    fun navigateToBack(){
+    fun navigateToBack() {
         viewModelScope.launch {
             _signUpSideEffect.emit(SignUpSideEffect.NaviagateToBack)
         }
@@ -109,8 +108,7 @@ class SignUpViewModel @Inject constructor(
                             _signupState.value.password,
                             _signupState.value.hobby
                         )
-                    ).onFailure { exception ->
-                        Log.d("ServerExeception", "등록 실패: ${exception.message}")
+                    ).onFailure {
                     }.onSuccess {
                         _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
                         navigateToLogin()
@@ -124,10 +122,10 @@ class SignUpViewModel @Inject constructor(
         private const val USER_INFO_LENGTH_MAX = 8
         private const val PASSWORD_TYPE = 3
 
-        const val UPPER_CASE_REGEX = "[A-Z]"
-        const val LOWER_CASE_REGEX = "[a-z]"
-        const val NUMBER_REGEX = "[0-9]"
-        const val SPECIAL_CHAR_REGEX = "[!@#\$%^&*(),.?\":{}|<>]"
+        private const val UPPER_CASE_REGEX = "[A-Z]"
+        private const val LOWER_CASE_REGEX = "[a-z]"
+        private const val NUMBER_REGEX = "[0-9]"
+        private const val SPECIAL_CHAR_REGEX = "[!@#\$%^&*(),.?\":{}|<>]"
 
         val EXTRA_SIGNUP_IMAGE_LIST = listOf(
             Icons.Default.CheckCircle,

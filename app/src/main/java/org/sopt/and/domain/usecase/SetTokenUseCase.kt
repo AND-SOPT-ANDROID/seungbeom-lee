@@ -3,7 +3,7 @@ package org.sopt.and.domain.usecase
 import org.sopt.and.domain.repository.DataStoreRepository
 import javax.inject.Inject
 
-class DataStoreSetTokenUseCase @Inject constructor(
+class SetTokenUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) {
     suspend operator fun invoke(token: String) {
