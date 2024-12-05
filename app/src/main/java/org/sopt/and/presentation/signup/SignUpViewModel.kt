@@ -89,34 +89,44 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun dataCheck() {
-        viewModelScope.launch {
-            when {
-                !isUserNameValid() ->
-                    _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_email))
-
-                !isPasswordValid() ->
-                    _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_password))
-
-                !isHobbyValid() ->
-                    _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_hobby))
-
-                else -> {
-                    registerUser(
-                        RequestUserInfoRegisterDto(
-                            _signupState.value.username,
-                            _signupState.value.password,
-                            _signupState.value.hobby
-                        )
-                    ).onFailure {
-                    }.onSuccess {
-                        _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
-                        navigateToLogin()
-                    }
-                }
+    private suspend fun dataCheck(): Boolean {
+        return when {
+            !isUserNameValid() -> {
+                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_email))
+                false
             }
+
+            !isPasswordValid() -> {
+                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_password))
+                false
+            }
+
+            !isHobbyValid() -> {
+                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_hobby))
+                false
+            }
+
+            else -> true
         }
     }
+
+
+    fun sendData() {
+        viewModelScope.launch {
+            if (dataCheck())
+                registerUser(
+                    RequestUserInfoRegisterDto(
+                        _signupState.value.username,
+                        _signupState.value.password,
+                        _signupState.value.hobby
+                    )
+                ).onSuccess {
+                    _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
+                    navigateToLogin()
+                }
+        }
+    }
+
 
     companion object {
         private const val USER_INFO_LENGTH_MAX = 8

@@ -49,7 +49,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = colorResource(R.color.basic_background))
             .padding(20.dp)

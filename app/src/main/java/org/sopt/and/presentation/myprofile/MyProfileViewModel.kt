@@ -36,8 +36,7 @@ class MyProfileViewModel @Inject constructor(
             _token.value = UserToken(savedToken)
             getUserHobby(
                 _token.value.token
-            ).onFailure {
-            }.onSuccess { response ->
+            ).onSuccess { response ->
                 _profileStatus.update {
                     it.copy(
                         hobby = response.hobby

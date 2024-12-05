@@ -28,7 +28,6 @@ class LogInViewModel @Inject constructor(
     private val _signInSideEffect = MutableSharedFlow<SignInSideEffect>()
     val signInSideEffect get() = _signInSideEffect.asSharedFlow()
 
-
     fun setUserName(userName: String) {
         _loginState.update {
             it.copy(

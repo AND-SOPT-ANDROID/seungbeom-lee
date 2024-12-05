@@ -82,6 +82,7 @@ fun SignUpScreen(
                             context
                         )
                     }
+
                     is SignUpSideEffect.NavigateToLogIn -> {
                         navigateToLogIn()
                     }
@@ -264,7 +265,7 @@ fun SignUpScreen(
                         .background(color = colorResource(R.color.signup_button_gray))
                         .alpha(0.7f)
                         .clickable {
-                            viewModel.dataCheck()
+                            viewModel.sendData()
                         }
                 ) {
                     Text(

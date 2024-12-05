@@ -37,7 +37,7 @@ fun ContentLazyList(imgList: List<Int>) {
 
 @Composable
 fun Content(
-   @DrawableRes img: Int
+    @DrawableRes img: Int
 ) {
     Box(
         modifier = Modifier
