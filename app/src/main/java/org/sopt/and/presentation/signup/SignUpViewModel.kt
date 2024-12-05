@@ -127,7 +127,6 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-
     companion object {
         private const val USER_INFO_LENGTH_MAX = 8
         private const val PASSWORD_TYPE = 3
