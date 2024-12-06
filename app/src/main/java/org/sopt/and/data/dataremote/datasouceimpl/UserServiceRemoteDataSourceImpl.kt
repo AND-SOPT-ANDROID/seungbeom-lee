@@ -7,7 +7,7 @@ import org.sopt.and.data.dataremote.model.request.RequestUserInfoRegisterDto
 import org.sopt.and.data.dataremote.model.response.ResponseGetMyHobbyDto
 import org.sopt.and.data.dataremote.model.response.ResponseSignInSuccessDto
 import org.sopt.and.data.dataremote.model.response.ResponseUserInfoRegisterSuccessDto
-import org.sopt.and.data.dataremote.service.AuthService
+import org.sopt.and.data.service.AuthService
 import javax.inject.Inject
 
 class UserServiceRemoteDataSourceImpl @Inject constructor(

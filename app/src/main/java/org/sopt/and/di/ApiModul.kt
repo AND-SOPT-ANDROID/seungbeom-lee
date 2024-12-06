@@ -10,7 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.sopt.and.BuildConfig
-import org.sopt.and.data.dataremote.service.AuthService
+import org.sopt.and.data.service.AuthService
 import retrofit2.Retrofit
 import javax.inject.Singleton
 

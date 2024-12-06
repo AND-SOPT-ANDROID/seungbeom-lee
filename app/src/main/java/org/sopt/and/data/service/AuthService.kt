@@ -1,4 +1,4 @@
-package org.sopt.and.data.dataremote.service
+package org.sopt.and.data.service
 
 import org.sopt.and.data.dataremote.model.BaseResponse
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
