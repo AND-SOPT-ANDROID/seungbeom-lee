@@ -49,7 +49,7 @@ import org.sopt.and.R
 import org.sopt.and.core.designsystem.component.textfield.UserInfoTextField
 import org.sopt.and.core.extension.showsnackBar
 import org.sopt.and.core.extension.toast
-import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
+import org.sopt.and.presentation.util.image.SignUpImage
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -128,7 +128,7 @@ fun LogInScreen(
     onPasswordValueChanged: (String) -> Unit = {},
     onLogInButtonClicked: () -> Unit = {},
     onSignUpButtonClicked: () -> Unit = {},
-    onPasswordVisibleButtonClicked: (Boolean) -> Unit = {}
+    onPasswordVisibleButtonClicked: () -> Unit = {}
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -188,7 +188,7 @@ fun LogInScreen(
                 trailingIcon = {
                     TextButton(
                         onClick = {
-                            onPasswordVisibleButtonClicked(logInUiState.isPasswordVisible)
+                            onPasswordVisibleButtonClicked()
                         }) {
                         if (logInUiState.isPasswordVisible) {
                             Text(
@@ -263,7 +263,7 @@ fun LogInScreen(
                 )
             }
             Row {
-                EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
+                SignUpImage.EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
                     Image(
                         imageVector = item,
                         contentDescription = item.name,

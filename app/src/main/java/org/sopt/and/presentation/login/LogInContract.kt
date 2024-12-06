@@ -22,7 +22,7 @@ class LogInContract {
     sealed class LogInEvent : UiEvent {
         data class OnEmailValueChanged(val emailValue: String) : LogInEvent()
         data class OnPasswordValueChanged(val passwordValue: String) : LogInEvent()
-        data class OnPasswordVisibleButtonClicked(val isPasswordVisible: Boolean) : LogInEvent()
+        data object OnPasswordVisibleButtonClicked : LogInEvent()
         data object OnLogInButtonClicked : LogInEvent()
         data object OnSignUpButtonClicked : LogInEvent()
     }

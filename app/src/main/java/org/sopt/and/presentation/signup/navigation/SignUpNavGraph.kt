@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import org.sopt.and.core.navigation.Route
+import org.sopt.and.presentation.signup.SignUpRoute
 import org.sopt.and.presentation.signup.SignUpScreen
 
 fun NavHostController.navigateToSignUp(navOptions: NavOptions) {
@@ -16,7 +17,7 @@ fun NavGraphBuilder.signUpNavGraph(
     navigationToBack: () -> Unit = {}
 ) {
     composable<Route.SignUp> {
-        SignUpScreen(
+        SignUpRoute(
             navigateToLogIn = navigationToLogIn,
             navigateToBack = navigationToBack
         )

@@ -6,6 +6,6 @@ sealed class SignUpSideEffect {
     data class ShowToast(@StringRes val message: Int) : SignUpSideEffect()
     data class ShowSnackBar(@StringRes val message: Int) : SignUpSideEffect()
     data object NavigateToLogIn : SignUpSideEffect()
-    data object NaviagateToBack : SignUpSideEffect()
+    data object NavigateToBack : SignUpSideEffect()
 }
 
