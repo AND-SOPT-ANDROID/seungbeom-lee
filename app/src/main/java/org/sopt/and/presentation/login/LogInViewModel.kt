@@ -1,81 +1,59 @@
 package org.sopt.and.presentation.login
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
 import org.sopt.and.data.dataremote.model.request.RequestSignInDto
-import org.sopt.and.domain.entity.UserLogInInfo
-import org.sopt.and.domain.entity.UserToken
 import org.sopt.and.domain.usecase.SetTokenUseCase
 import org.sopt.and.domain.usecase.SignInUserUseCase
+import org.sopt.and.presentation.util.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class LogInViewModel @Inject constructor(
-    private val signInUserUseCase: SignInUserUseCase,
-    private val setTokenUseCase: SetTokenUseCase
-) : ViewModel() {
-    private val _loginState = MutableStateFlow(UserLogInInfo())
-    val loginState = _loginState.asStateFlow()
+    private val loginValidation: SignInUserUseCase,
+    private val setToken: SetTokenUseCase
+) : BaseViewModel<LogInContract.LoginUiState, LogInContract.LogInSideEffect, LogInContract.LogInEvent>() {
+    override fun createInitialState(): LogInContract.LoginUiState = LogInContract.LoginUiState()
 
-    private val _signInSideEffect = MutableSharedFlow<SignInSideEffect>()
-    val signInSideEffect get() = _signInSideEffect.asSharedFlow()
+    override suspend fun handleEvent(event: LogInContract.LogInEvent) {
+        when (event) {
+            is LogInContract.LogInEvent.OnLogInButtonClicked -> {
+                loginWithValidation()
+            }
 
-    fun setUserName(userName: String) {
-        _loginState.update {
-            it.copy(
-                userName = userName
-            )
+            is LogInContract.LogInEvent.OnSignUpButtonClicked -> {
+                setSideEffect(LogInContract.LogInSideEffect.NavigateToSignUp)
+            }
+
+            is LogInContract.LogInEvent.OnEmailValueChanged -> {
+                setState { copy(emailValue = event.emailValue) }
+            }
+
+            is LogInContract.LogInEvent.OnPasswordValueChanged -> {
+                setState { copy(passwordValue = event.passwordValue) }
+            }
+
+            is LogInContract.LogInEvent.OnPasswordVisibleButtonClicked -> {
+                setState { copy(isPasswordVisible = !isPasswordVisible) }
+            }
         }
     }
 
-    fun setPassword(password: String) {
-        _loginState.update {
-            it.copy(
-                password = password
-            )
-        }
-    }
-
-    private suspend fun signInUser(request: RequestSignInDto): Result<UserToken> =
-        signInUserUseCase(request)
-
-    private suspend fun setToken(token: String) {
-        setTokenUseCase(token)
-    }
-
-    private fun navigateToHome() {
+    private fun loginWithValidation() {
         viewModelScope.launch {
-            _signInSideEffect.emit(SignInSideEffect.NavigateToHome)
-        }
-    }
-
-    fun navigateToSignUp() {
-        viewModelScope.launch {
-            _signInSideEffect.emit(SignInSideEffect.NavigateToSignUp)
-        }
-    }
-
-    fun checkLoginData() {
-        viewModelScope.launch {
-            signInUser(
+            loginValidation(
                 RequestSignInDto(
-                    _loginState.value.userName,
-                    _loginState.value.password
+                    currentState.emailValue,
+                    currentState.passwordValue
                 )
             ).onFailure {
-                _signInSideEffect.emit(SignInSideEffect.ShowSnackBar(R.string.check_id_password))
+                setSideEffect(LogInContract.LogInSideEffect.ShowSnackBar(R.string.check_id_password))
             }.onSuccess { response ->
-                _signInSideEffect.emit(SignInSideEffect.ShowToast(R.string.login_success_toast))
+                setSideEffect(LogInContract.LogInSideEffect.ShowToast(R.string.login_success_toast))
                 setToken(response.token)
-                navigateToHome()
+                setSideEffect(LogInContract.LogInSideEffect.NavigateToHome)
             }
         }
     }

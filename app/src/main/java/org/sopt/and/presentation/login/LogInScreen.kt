@@ -29,9 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,53 +51,85 @@ import org.sopt.and.core.extension.showsnackBar
 import org.sopt.and.core.extension.toast
 import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
 
-
-@ExperimentalPermissionsApi
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun LogInScreen(
+fun LogInRoute(
     navigateToSignUp: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    viewModel: LogInViewModel = hiltViewModel()
 ) {
-    val viewModel: LogInViewModel = hiltViewModel()
-
     val context = LocalContext.current
-
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-    val id = loginState.userName
-    val password = loginState.password
-
-    var isPasswordVisible by remember { mutableStateOf(false) }
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(viewModel.signInSideEffect, lifecycleOwner) {
-        viewModel.signInSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    is SignInSideEffect.ShowToast -> {
+                    is LogInContract.LogInSideEffect.ShowToast -> {
                         context.toast(sideEffect.message)
                     }
 
-                    is SignInSideEffect.ShowSnackBar -> {
+                    is LogInContract.LogInSideEffect.ShowSnackBar -> {
                         snackBarHostState.showsnackBar(
                             sideEffect.message,
                             context
                         )
                     }
 
-                    is SignInSideEffect.NavigateToSignUp -> {
+                    is LogInContract.LogInSideEffect.NavigateToSignUp -> {
                         navigateToSignUp()
                     }
 
-                    is SignInSideEffect.NavigateToHome -> {
+                    is LogInContract.LogInSideEffect.NavigateToHome -> {
                         navigateToHome()
                     }
                 }
             }
     }
+    LogInScreen(
+        logInUiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onEmailValueChanged = { emailValue ->
+            viewModel.setEvent(
+                LogInContract.LogInEvent.OnEmailValueChanged(
+                    emailValue = emailValue
+                )
+            )
+        },
+        onPasswordValueChanged = { passwordValue ->
+            viewModel.setEvent(
+                LogInContract.LogInEvent.OnPasswordValueChanged(
+                    passwordValue = passwordValue
+                )
+            )
+        },
+        onLogInButtonClicked = {
+            viewModel.setEvent(
+                LogInContract.LogInEvent.OnLogInButtonClicked
+            )
+        },
+        onSignUpButtonClicked = {
+            viewModel.setEvent(
+                LogInContract.LogInEvent.OnSignUpButtonClicked
+            )
+        }
+    )
+}
 
+@ExperimentalPermissionsApi
+@Composable
+fun LogInScreen(
+    logInUiState: LogInContract.LoginUiState,
+    snackBarHostState: SnackbarHostState,
+    onEmailValueChanged: (String) -> Unit = {},
+    onPasswordValueChanged: (String) -> Unit = {},
+    onLogInButtonClicked: () -> Unit = {},
+    onSignUpButtonClicked: () -> Unit = {},
+    onPasswordVisibleButtonClicked: (Boolean) -> Unit = {}
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = {
@@ -136,8 +166,8 @@ fun LogInScreen(
             Spacer(Modifier.padding(40.dp))
 
             UserInfoTextField(
-                textField = id,
-                onValueChange = viewModel::setUserName,
+                textField = logInUiState.emailValue,
+                onValueChange = onEmailValueChanged,
                 placeholder = stringResource(R.string.logintextfield_placeholder),
                 isShown = true,
                 keyboardOptions = KeyboardOptions(
@@ -148,19 +178,19 @@ fun LogInScreen(
             Spacer(Modifier.padding(5.dp))
 
             UserInfoTextField(
-                textField = password,
-                onValueChange = viewModel::setPassword,
+                textField = logInUiState.passwordValue,
+                onValueChange = onPasswordValueChanged,
                 placeholder = stringResource(R.string.password),
-                isShown = isPasswordVisible,
+                isShown = logInUiState.isPasswordVisible,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
                 ),
                 trailingIcon = {
                     TextButton(
                         onClick = {
-                            isPasswordVisible = !isPasswordVisible
+                            onPasswordVisibleButtonClicked(logInUiState.isPasswordVisible)
                         }) {
-                        if (isPasswordVisible) {
+                        if (logInUiState.isPasswordVisible) {
                             Text(
                                 text = stringResource(R.string.hide),
                                 modifier = Modifier.padding(7.dp),
@@ -185,7 +215,7 @@ fun LogInScreen(
             ) {
                 Button(
                     onClick = {
-                        viewModel.checkLoginData()
+                        onLogInButtonClicked()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -201,7 +231,7 @@ fun LogInScreen(
                 }
                 TextButton(
                     onClick = {
-                        viewModel.navigateToSignUp()
+                        onSignUpButtonClicked()
                     }
                 ) {
                     Text(
