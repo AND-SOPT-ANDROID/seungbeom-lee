@@ -1,52 +1,71 @@
 package org.sopt.and.presentation.myprofile
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.sopt.and.domain.entity.UserHobby
 import org.sopt.and.domain.entity.UserToken
 import org.sopt.and.domain.usecase.GetTokenUseCase
 import org.sopt.and.domain.usecase.GetUserHobbyUseCase
+import org.sopt.and.presentation.util.base.BaseViewModel
+import org.sopt.and.presentation.util.view.LoadState
 import javax.inject.Inject
 
 @HiltViewModel
 class MyProfileViewModel @Inject constructor(
-    private val getUserHobbyUseCase: GetUserHobbyUseCase,
-    private val getTokenUseCase: GetTokenUseCase
-) : ViewModel() {
-    private val _profileStatus = MutableStateFlow(ProfileState())
-    val profileState = _profileStatus.asStateFlow()
+    private val getUserHobby: GetUserHobbyUseCase,
+    private val getToken: GetTokenUseCase
+) : BaseViewModel<MyProfileContract.ProfileUiState, MyProfileContract.ProfileSideEffect, MyProfileContract.ProfileEvent>() {
+    override fun createInitialState(): MyProfileContract.ProfileUiState =
+        MyProfileContract.ProfileUiState()
 
-    private var _token = MutableStateFlow(UserToken())
+    override suspend fun handleEvent(event: MyProfileContract.ProfileEvent) {
+        when (event) {
+            is MyProfileContract.ProfileEvent.FetchUserHobby ->
+                setState { copy(loadState = event.loadState, hobby = event.userHobby) }
 
-    private suspend fun getUserHobby(token: String): Result<UserHobby> =
-        getUserHobbyUseCase(token)
+            is MyProfileContract.ProfileEvent.FetchToken ->
+                setState { copy(token = event.token) }
+        }
+    }
 
-    private suspend fun getToken(): Flow<String> = getTokenUseCase()
-
-    fun setHobby() {
+    fun fetchToken() {
         viewModelScope.launch {
-            val savedToken = getToken().first()
-            _token.value = UserToken(savedToken)
-            getUserHobby(
-                _token.value.token
-            ).onSuccess { response ->
-                _profileStatus.update {
-                    it.copy(
-                        hobby = response.hobby
+            setEvent(
+                MyProfileContract.ProfileEvent.FetchToken(
+                    token = UserToken(getToken().first())
+                )
+            )
+        }
+    }
+
+
+    fun fetchUserHobby() {
+        viewModelScope.launch {
+            setEvent(
+                MyProfileContract.ProfileEvent.FetchUserHobby(
+                    loadState = LoadState.Loading,
+                    userHobby = currentState.hobby
+                )
+            )
+
+            getUserHobby(token = currentState.token.token)
+                .onSuccess { response ->
+                    setEvent(
+                        MyProfileContract.ProfileEvent.FetchUserHobby(
+                            loadState = LoadState.Success,
+                            userHobby = response.hobby
+                        )
                     )
                 }
-            }
+                .onFailure {
+                    setEvent(
+                        MyProfileContract.ProfileEvent.FetchUserHobby(
+                            loadState = LoadState.Error,
+                            userHobby = currentState.hobby
+                        )
+                    )
+                }
         }
     }
 }
-
-data class ProfileState(
-    val hobby: String = "",
-)
