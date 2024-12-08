@@ -39,7 +39,6 @@ class MyProfileViewModel @Inject constructor(
         }
     }
 
-
     fun fetchUserHobby() {
         viewModelScope.launch {
             setEvent(

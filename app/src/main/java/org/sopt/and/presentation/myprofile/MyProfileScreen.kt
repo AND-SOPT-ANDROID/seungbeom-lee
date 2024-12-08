@@ -53,17 +53,13 @@ fun MyProfileRoute(
         LoadState.Success -> MyProfileScreen(myUiState = uiState)
 
         LoadState.Error -> {}
-
     }
-
 }
 
 @Composable
 fun MyProfileScreen(
     myUiState: MyProfileContract.ProfileUiState
 ) {
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
