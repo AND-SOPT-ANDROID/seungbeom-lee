@@ -28,9 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -48,61 +46,92 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import org.sopt.and.R
 import org.sopt.and.core.designsystem.component.textfield.UserInfoTextField
-import org.sopt.and.core.extension.showsnackBar
+import org.sopt.and.core.extension.serverToast
 import org.sopt.and.core.extension.toast
-import org.sopt.and.presentation.signup.SignUpViewModel.Companion.EXTRA_SIGNUP_IMAGE_LIST
-
+import org.sopt.and.presentation.util.image.SignUpImage
 
 @Composable
-fun SignUpScreen(
+fun SignUpRoute(
     navigateToLogIn: () -> Unit,
-    navigateToBack: () -> Unit
+    navigateToBack: () -> Unit,
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val viewModel: SignUpViewModel = hiltViewModel()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    val signUpState by viewModel.signupState.collectAsStateWithLifecycle()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(viewModel.signUpSideEffect, lifecycleOwner) {
-        viewModel.signUpSideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    is SignUpSideEffect.ShowToast -> {
+                    is SignUpContract.SignUpSideEffect.ShowToast -> {
                         context.toast(sideEffect.message)
                     }
 
-                    is SignUpSideEffect.ShowSnackBar -> {
-                        snackbarHostState.showsnackBar(
-                            sideEffect.message,
-                            context
-                        )
+                    is SignUpContract.SignUpSideEffect.ShowServerToastMessage -> {
+                        context.serverToast(sideEffect.message)
                     }
 
-                    is SignUpSideEffect.NavigateToLogIn -> {
+                    is SignUpContract.SignUpSideEffect.NavigateToLogIn -> {
                         navigateToLogIn()
                     }
 
-                    is SignUpSideEffect.NaviagateToBack -> {
+                    is SignUpContract.SignUpSideEffect.NavigateToBack -> {
                         navigateToBack()
                     }
                 }
             }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        content = { innerpadding ->
+    SignUpScreen(
+        signUpUiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onEmailValueChanged = { emailValue ->
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnEmailValueChanged(emailValue = emailValue))
+        },
+        onPasswordValueChanged = { passwordValue ->
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnPasswordValueChanged(passwordValue = passwordValue))
+        },
+        onHobbyValueChanged = { hobbyValue ->
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnHobbyValueChanged(hobbyValue = hobbyValue))
+        },
+        onPasswordVisibleButtonClicked = {
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnPasswordVisibleButtonClicked)
+        },
+        onBackButtonClicked = {
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnBackButtonClicked)
+        },
+        onSignupButtonClicked = {
+            viewModel.setEvent(SignUpContract.SignUpEvent.OnSignUpButtonClicked)
+        }
+    )
+}
+
+@Composable
+fun SignUpScreen(
+    signUpUiState: SignUpContract.SignUpUiState,
+    snackBarHostState: SnackbarHostState,
+    onEmailValueChanged: (String) -> Unit = {},
+    onPasswordValueChanged: (String) -> Unit = {},
+    onHobbyValueChanged: (String) -> Unit = {},
+    onPasswordVisibleButtonClicked: () -> Unit = {},
+    onSignupButtonClicked: () -> Unit = {},
+    onBackButtonClicked: () -> Unit = {}
+
+) {
+
+
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+        content = { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = colorResource(R.color.basic_background))
-                    .padding(innerpadding)
+                    .padding(innerPadding)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,7 +157,7 @@ fun SignUpScreen(
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable {
-                                    viewModel.navigateToBack()
+                                    onBackButtonClicked()
                                 },
                             tint = colorResource(R.color.exit)
                         )
@@ -153,8 +182,8 @@ fun SignUpScreen(
                     Spacer(Modifier.padding(13.dp))
 
                     UserInfoTextField(
-                        textField = signUpState.username,
-                        onValueChange = viewModel::setUserName,
+                        textField = signUpUiState.emailValue,
+                        onValueChange = onEmailValueChanged,
                         placeholder = stringResource(R.string.wavve_email),
                         isShown = true,
                         keyboardOptions = KeyboardOptions(
@@ -164,15 +193,15 @@ fun SignUpScreen(
                     )
 
                     UserInfoTextField(
-                        textField = signUpState.password,
-                        onValueChange = viewModel::setPassword,
+                        textField = signUpUiState.passwordValue,
+                        onValueChange = onPasswordValueChanged,
                         placeholder = stringResource(R.string.set_wavve_password_signup),
-                        isShown = isPasswordVisible,
+                        isShown = signUpUiState.isPasswordVisible,
                         trailingIcon = {
                             TextButton(
-                                onClick = { isPasswordVisible = !isPasswordVisible },
+                                onClick = onPasswordVisibleButtonClicked,
                                 content = {
-                                    if (isPasswordVisible) {
+                                    if (signUpUiState.isPasswordVisible) {
                                         Text(
                                             text = stringResource(R.string.hide),
                                             modifier = Modifier.padding(7.dp),
@@ -197,8 +226,8 @@ fun SignUpScreen(
                     }
 
                     UserInfoTextField(
-                        textField = signUpState.hobby,
-                        onValueChange = viewModel::setHobby,
+                        textField = signUpUiState.hobbyValue,
+                        onValueChange = onHobbyValueChanged,
                         placeholder = stringResource(R.string.sign_up_hobby_basketball),
                         isShown = true,
                         keyboardOptions = KeyboardOptions(
@@ -229,7 +258,7 @@ fun SignUpScreen(
                     }
 
                     Row {
-                        EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
+                        SignUpImage.EXTRA_SIGNUP_IMAGE_LIST.forEach { item ->
                             Image(
                                 imageVector = item,
                                 contentDescription = item.name,
@@ -265,7 +294,7 @@ fun SignUpScreen(
                         .background(color = colorResource(R.color.signup_button_gray))
                         .alpha(0.7f)
                         .clickable {
-                            viewModel.sendData()
+                            onSignupButtonClicked()
                         }
                 ) {
                     Text(

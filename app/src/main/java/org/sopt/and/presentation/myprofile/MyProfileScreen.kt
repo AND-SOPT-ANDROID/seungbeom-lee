@@ -32,16 +32,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.and.R
 import org.sopt.and.presentation.myprofile.component.BuyNowSection
-
+import org.sopt.and.presentation.util.view.LoadState
 
 @Composable
-fun MyProfileScreen() {
-    val profileViewModel: MyProfileViewModel = hiltViewModel()
-    val profileState by profileViewModel.profileState.collectAsStateWithLifecycle()
+fun MyProfileRoute(
+    viewModel: MyProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        profileViewModel.setHobby()
+        viewModel.fetchToken()
+        viewModel.fetchUserHobby()
     }
+
+    when (uiState.loadState) {
+        LoadState.Idle -> {}
+
+        LoadState.Loading -> {}
+
+        LoadState.Success -> MyProfileScreen(myUiState = uiState)
+
+        LoadState.Error -> {}
+    }
+}
+
+@Composable
+fun MyProfileScreen(
+    myUiState: MyProfileContract.ProfileUiState
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +81,7 @@ fun MyProfileScreen() {
                 )
 
                 Text(
-                    text = profileState.hobby,
+                    text = myUiState.hobby,
                     color = colorResource(R.color.white),
                     modifier = Modifier
                         .padding(start = 5.dp)

@@ -2,147 +2,65 @@ package org.sopt.and.presentation.signup
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.sopt.and.R
 import org.sopt.and.data.dataremote.model.request.RequestUserInfoRegisterDto
-import org.sopt.and.data.dataremote.model.response.ResponseUserInfoRegisterSuccessDto
-import org.sopt.and.domain.entity.UserSignUpInfo
 import org.sopt.and.domain.usecase.RegisterUserUseCase
+import org.sopt.and.presentation.util.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val registerUserUseCase: RegisterUserUseCase
-) : ViewModel() {
-    private val _signupState = MutableStateFlow(UserSignUpInfo())
-    val signupState = _signupState.asStateFlow()
+    private val registerUser: RegisterUserUseCase
+) : BaseViewModel<SignUpContract.SignUpUiState, SignUpContract.SignUpSideEffect, SignUpContract.SignUpEvent>() {
+    override fun createInitialState(): SignUpContract.SignUpUiState = SignUpContract.SignUpUiState()
 
-
-    private val _signUpSideEffect = MutableSharedFlow<SignUpSideEffect>()
-    val signUpSideEffect get() = _signUpSideEffect.asSharedFlow()
-
-    fun setUserName(username: String) {
-        _signupState.update {
-            it.copy(
-                username = username
-            )
-        }
-    }
-
-    fun setPassword(password: String) {
-        _signupState.update {
-            it.copy(
-                password = password
-            )
-        }
-    }
-
-    fun setHobby(hobby: String) {
-        _signupState.update {
-            it.copy(
-                hobby = hobby
-            )
-        }
-    }
-
-    private suspend fun registerUser(request: RequestUserInfoRegisterDto):
-            Result<ResponseUserInfoRegisterSuccessDto> = registerUserUseCase(request)
-
-    private fun isUserNameValid(): Boolean =
-        _signupState.value.username.length < USER_INFO_LENGTH_MAX
-
-    private fun isHobbyValid(): Boolean =
-        _signupState.value.hobby.length < USER_INFO_LENGTH_MAX
-
-    private fun isPasswordValid(): Boolean {
-        val password = _signupState.value.password
-
-        if (password.length < USER_INFO_LENGTH_MAX) {
-            var count = 0
-            if (password.contains(UPPER_CASE_REGEX.toRegex())) count++
-            if (password.contains(LOWER_CASE_REGEX.toRegex())) count++
-            if (password.contains(NUMBER_REGEX.toRegex())) count++
-            if (password.contains(SPECIAL_CHAR_REGEX.toRegex())) count++
-
-            if (count >= PASSWORD_TYPE) return true
-        }
-        return false
-    }
-
-    private fun navigateToLogin() {
-        viewModelScope.launch {
-            _signUpSideEffect.emit(SignUpSideEffect.NavigateToLogIn)
-        }
-    }
-
-    fun navigateToBack() {
-        viewModelScope.launch {
-            _signUpSideEffect.emit(SignUpSideEffect.NaviagateToBack)
-        }
-    }
-
-    private suspend fun dataCheck(): Boolean {
-        return when {
-            !isUserNameValid() -> {
-                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_email))
-                false
+    override suspend fun handleEvent(event: SignUpContract.SignUpEvent) {
+        when (event) {
+            is SignUpContract.SignUpEvent.OnSignUpButtonClicked -> {
+                registerUserInfo()
             }
 
-            !isPasswordValid() -> {
-                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_password))
-                false
+            is SignUpContract.SignUpEvent.OnEmailValueChanged -> {
+                setState { copy(emailValue = event.emailValue) }
             }
 
-            !isHobbyValid() -> {
-                _signUpSideEffect.emit(SignUpSideEffect.ShowSnackBar(R.string.sign_up_not_valid_hobby))
-                false
+            is SignUpContract.SignUpEvent.OnPasswordValueChanged -> {
+                setState { copy(passwordValue = event.passwordValue) }
             }
 
-            else -> true
+            is SignUpContract.SignUpEvent.OnPasswordVisibleButtonClicked -> {
+                setState { copy(isPasswordVisible = !isPasswordVisible) }
+            }
+
+            is SignUpContract.SignUpEvent.OnHobbyValueChanged -> {
+                setState { copy(hobbyValue = event.hobbyValue) }
+            }
+
+            is SignUpContract.SignUpEvent.OnBackButtonClicked -> {
+                setSideEffect(SignUpContract.SignUpSideEffect.NavigateToBack)
+            }
         }
     }
 
 
-    fun sendData() {
+    private fun registerUserInfo() {
         viewModelScope.launch {
-            if (dataCheck())
-                registerUser(
-                    RequestUserInfoRegisterDto(
-                        _signupState.value.username,
-                        _signupState.value.password,
-                        _signupState.value.hobby
-                    )
-                ).onSuccess {
-                    _signUpSideEffect.emit(SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
-                    navigateToLogin()
-                }
+            registerUser(
+                RequestUserInfoRegisterDto(
+                    uiState.value.emailValue,
+                    uiState.value.passwordValue,
+                    uiState.value.hobbyValue,
+                )
+            ).onFailure {
+                setSideEffect(SignUpContract.SignUpSideEffect.ShowServerToastMessage(it.message))
+            }.onSuccess {
+                setSideEffect(SignUpContract.SignUpSideEffect.ShowToast(R.string.sign_up_signup_success))
+                setSideEffect(SignUpContract.SignUpSideEffect.NavigateToLogIn)
+            }
         }
-    }
-
-    companion object {
-        private const val USER_INFO_LENGTH_MAX = 8
-        private const val PASSWORD_TYPE = 3
-
-        private const val UPPER_CASE_REGEX = "[A-Z]"
-        private const val LOWER_CASE_REGEX = "[a-z]"
-        private const val NUMBER_REGEX = "[0-9]"
-        private const val SPECIAL_CHAR_REGEX = "[!@#\$%^&*(),.?\":{}|<>]"
-
-        val EXTRA_SIGNUP_IMAGE_LIST = listOf(
-            Icons.Default.CheckCircle,
-            Icons.Default.CheckCircle,
-            Icons.Default.CheckCircle,
-            Icons.Default.CheckCircle,
-            Icons.Default.CheckCircle
-        )
     }
 }
 

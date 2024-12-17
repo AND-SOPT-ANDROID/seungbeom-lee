@@ -1,6 +1,7 @@
 package org.sopt.and.presentation.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,20 +36,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.sopt.and.R
 import org.sopt.and.presentation.home.component.ContentLazyList
 import org.sopt.and.presentation.home.component.MainBannerPager
 import org.sopt.and.presentation.home.component.Top20LazyList
 
-
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    val homeViewModel = viewModel<HomeViewModel>()
-
-    val uiState = homeViewModel.uiState
+fun HomeRoute(
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
 
+    HomeScreen(
+        uiState = uiState,
+        scrollState = scrollState,
+    )
+}
+
+@Composable
+fun HomeScreen(
+    uiState: HomeContract.HomeUIState,
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -87,7 +101,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            items(uiState.value.genreList) { genre ->
+            items(uiState.genreList) { genre ->
                 Text(
                     text = genre,
                     color = colorResource(R.color.gray_a3),
@@ -98,18 +112,18 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(20.dp))
 
-        MainBannerPager(uiState.value.mainBannerList)
+        MainBannerPager(uiState.mainBannerList)
 
         Spacer(Modifier.height(20.dp))
 
         RecommendedContent(stringResource(R.string.home_editor_recommend_content), true) {
-            ContentLazyList(uiState.value.editorRecomendList)
+            ContentLazyList(uiState.editorRecommendList)
         }
 
         Spacer(Modifier.height(20.dp))
 
         RecommendedContent(stringResource(R.string.home_today_top20), false) {
-            Top20LazyList(uiState.value.top20List)
+            Top20LazyList(uiState.top20List)
         }
     }
 }
@@ -149,6 +163,6 @@ fun RecommendedContent(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeRoute()
 }
 

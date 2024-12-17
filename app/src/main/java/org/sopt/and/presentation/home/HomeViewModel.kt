@@ -3,8 +3,21 @@ package org.sopt.and.presentation.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import org.sopt.and.R
+import org.sopt.and.presentation.signup.SignUpContract
+import org.sopt.and.presentation.util.base.BaseViewModel
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel :
+    BaseViewModel<HomeContract.HomeUIState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
+    override fun createInitialState(): HomeContract.HomeUIState = HomeContract.HomeUIState(
+        genreList = getGenreTextList(),
+        editorRecommendList = getEditorRecommendList(),
+        top20List = getTop20List(),
+        mainBannerList = getMainBannerImage()
+    )
+
+    override suspend fun handleEvent(event: HomeContract.HomeEvent) {
+    }
+
     private fun getGenreTextList() = listOf(
         "뉴클래식", "드라마", "예능", "영화", "애니", "해외시리즈"
     )
@@ -39,23 +52,5 @@ class HomeViewModel : ViewModel() {
         R.drawable.img_top20_9,
         R.drawable.img_top20_10,
     )
-
-    private val _uiState =
-        mutableStateOf(
-            UIState(
-                getGenreTextList(),
-                getMainBannerImage(),
-                getEditorRecommendList(),
-                getTop20List()
-            )
-        )
-    val uiState = _uiState
-
 }
 
-data class UIState(
-    val genreList: List<String> = listOf(),
-    val mainBannerList: List<Int> = listOf(),
-    val editorRecomendList: List<Int> = listOf(),
-    val top20List: List<Int> = listOf()
-)

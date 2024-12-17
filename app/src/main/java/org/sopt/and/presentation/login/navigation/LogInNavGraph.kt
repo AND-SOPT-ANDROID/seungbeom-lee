@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import org.sopt.and.core.navigation.Route
+import org.sopt.and.presentation.login.LogInRoute
 import org.sopt.and.presentation.login.LogInScreen
 
 fun NavHostController.navigateToLogIn(navOptions: NavOptions) {
@@ -18,7 +19,7 @@ fun NavGraphBuilder.signInNavGraph(
     navigationToHome: () -> Unit = {}
 ) {
     composable<Route.LogIn> {
-        LogInScreen(
+        LogInRoute(
             navigateToSignUp = navigationToSignUp,
             navigateToHome = navigationToHome,
         )
